@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karaoke Babloe v3.2 - FIX PLAY - Ibnu Gozali</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{--bg:#0a0e1a;--panel:#141a2b;--panel2:#1c233a;--yellow:#ffcc00;--blue:#00c6ff;--text:#e6e8f0;--muted:#8a90a8;--border:#222c4a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(90deg,#0f172f,#141a2b);border-bottom:2px solid var(--yellow);padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:22px;font-weight:700}
+header h1 span{color:var(--yellow)}
+.main{flex:1;display:grid;grid-template-columns:300px 1fr 340px;gap:12px;padding:12px;height:calc(100vh - 90px)}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;overflow:auto}
+.panel-title{font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);padding-bottom:6px}
+textarea{width:100%;height:180px;background:#0b1020;color:#d0d6f0;border:1px solid var(--border);border-radius:8px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:12px;resize:none}
+.btn{border:none;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:12px}
+.btn-yellow{background:var(--yellow);color:#111}
+.btn-blue{background:var(--blue);color:#111}
+.btn-outline{background:var(--panel2);border:1px solid var(--border);color:var(--text)}
+.row{display:flex;gap:6px}
+.file-group{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px}
+.file-group label{font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px}
+.file-group input{width:100%;font-size:11px}
+.desc{font-size:10px;color:#6b7280;margin-top:3px}
+.preview{position:relative;background:#000;border-radius:12px;border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.preview-stage{flex:1;background:#000;display:flex;align-items:center;justify-content:center;position:relative;min-height:360px}
+video#realVideo{width:100%;height:100%;object-fit:contain;display:none}
+canvas#canvasPreview{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain}
+.lyric-overlay{position:absolute;bottom:22%;left:0;right:0;text-align:center;font-weight:800;font-size:36px;text-shadow:0 2px 10px #000,0 0 20px #000;pointer-events:none;line-height:1.2}
+.timeline-area{background:#101528;border-top:1px solid var(--border);padding:10px}
+.timeline-track{position:relative;height:52px;background:#0b1020;border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer}
+.track-lane{position:absolute;left:0;right:0;height:16px;font-size:9px;display:flex;align-items:center;padding-left:6px;color:#fff;overflow:hidden;white-space:nowrap}
+.lane-vocal{top:2px;background:linear-gradient(90deg,#ffcc0055,#ffcc00);color:#000}
+.lane-music{top:18px;background:linear-gradient(90deg,#00c6ff55,#00c6ff);color:#000}
+.lane-video{top:34px;background:linear-gradient(90deg,#8b5cf655,#8b5cf6)}
+.playhead{position:absolute;top:0;bottom:0;width:2px;background:#fff;left:0;z-index:5;box-shadow:0 0 6px #fff}
+.time-controls{display:flex;gap:6px;margin-top:8px;align-items:end}
+.time-controls input{width:70px;background:#0b1020;border:1px solid var(--border);border-radius:4px;color:var(--text);padding:4px;font-size:11px;text-align:center}
+footer{text-align:center;padding:8px;font-size:11px;color:var(--muted);border-top:1px solid var(--border)}
+footer b{color:var(--yellow)}
+audio{display:none}
+</style>
+</head>
+<body>
+<header>
+<h1>KARAOKE <span>BABLOE v3.2</span> <span style="font-size:12px;color:#00ff88">• FIX PLAY</span></h1>
+<div id="authArea">
+<div id="g_id_onload" data-client_id="794101225266-pjd3pqov3ac21g24kaidsibrdd2oosru.apps.googleusercontent.com" data-callback="handleLogin"></div>
+<div class="g_id_signin" data-type="standard" data-theme="filled_white"></div>
+</div>
+</header>
+<div class="main">
+<div class="panel">
+<div class="panel-title">01 • Lirik Lagu</div>
+<textarea id="lyricsInput">Berawal dari manisnya kasih sayang
+Terlanjur kita hanyut dan terbuai
+Kucoba bertahan mendampingi dirimu
+Walau kadang kala tak seiring jalan
+Kucari dan selalu kucari jalan terbaik
+Sepanjang kita masih terus begini
+Takkan pernah ada damai bersenandung
+Kemesraan antara kita berdua
+Sesungguhnya keterpaksaan saja
+Senyum dan tawa hanya sekedar saja
+Sbagai pelengkap sempurnanya sandiwara
+Berawal dari manisnya kasih sayang
+Terlanjur kita hanyut dan terbuai</textarea>
+<div class="row">
+<button class="btn btn-yellow" style="flex:1" onclick="parseLyrics()">Parse Lirik</button>
+<button class="btn btn-outline" style="flex:1">Undo 99x</button>
+</div>
+<div id="parsedBox" style="background:#0b1020;border-radius:6px;height:140px;border:1px solid var(--border);overflow:auto;padding:6px;font-size:11px"></div>
+<label style="font-size:11px"><input type="checkbox" id="muteVocal" checked> Mute Vocal Panduan saat Play (mode karaoke)</label>
+</div>
+<div class="preview">
+<div class="preview-stage" id="stage">
+<video id="realVideo" playsinline muted></video>
+<canvas id="canvasPreview" width="1280" height="720"></canvas>
+<div class="lyric-overlay" id="lyricOverlay">Sepanjang kita masih terus begini</div>
+</div>
+<div class="timeline-area">
+<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px">
+<span>🎛️ TIMELINE EDITOR v3.2 - REAL ENGINE</span>
+<span id="timeDisplay">00:00 / 00:00</span>
+</div>
+<div class="timeline-track" id="timelineTrack" onclick="seek(event)">
+<div class="playhead" id="playhead"></div>
+<div class="track-lane lane-vocal" id="laneVocal">🎤 VOCAL - belum load</div>
+<div class="track-lane lane-music" id="laneMusic">🎵 MUSIK - belum load</div>
+<div class="track-lane lane-video" id="laneVideo">🎬 VIDEO - belum load</div>
+</div>
+<div class="time-controls">
+<button class="btn btn-outline" onclick="nudge(-0.5)">-0.5s</button>
+<button class="btn btn-outline" onclick="nudge(-0.1)">-0.1s</button>
+<div style="flex:1"></div>
+<label style="font-size:10px">Offset Lirik<br><input id="lyricOffset" type="number" value="0" step="0.1"></label>
+<label style="font-size:10px">Offset Vocal<br><input id="vocalOffset" type="number" value="0" step="0.1"></label>
+<label style="font-size:10px">Offset Musik<br><input id="musicOffset" type="number" value="0" step="0.1"></label>
+<div style="flex:1"></div>
+<button class="btn btn-outline" onclick="nudge(0.1)">+0.1s</button>
+<button class="btn btn-outline" onclick="nudge(0.5)">+0.5s</button>
+</div>
+<div class="row" style="margin-top:8px">
+<button class="btn btn-yellow" style="flex:1" id="playBtn" onclick="togglePlay()">▶️ Play</button>
+<button class="btn btn-blue" style="flex:1" onclick="stopAll()">⏹️ Stop</button>
+<button class="btn btn-outline" style="flex:1" onclick="renderVideo()">⏺️ Render</button>
+</div>
+</div>
+</div>
+<div class="panel">
+<div class="panel-title">02 • Source Files</div>
+<div class="file-group">
+<label>🎤 1. VOCAL PANDUAN (MP3/WAV) - Contoh: audio [vocals].mp3</label>
+<input type="file" id="vocalFile" accept="audio/*" onchange="loadVocal(this)">
+<audio id="audioVocal" controls></audio>
+<div class="desc" id="vocalInfo">Belum ada file</div>
+</div>
+<div class="file-group">
+<label>🎵 2. MUSIK INSTRUMENT (MP3/WAV) - audio [music].mp3</label>
+<input type="file" id="musicFile" accept="audio/*" onchange="loadMusic(this)">
+<audio id="audioMusic" controls></audio>
+<div class="desc" id="musicInfo">Ini audio final karaoke</div>
+</div>
+<div class="file-group">
+<label>🎬 3. VIDEO BACKGROUND (MP4/WebM) - Kucoba jalan terbaik - coba.webm</label>
+<input type="file" id="videoFile" accept="video/*" onchange="loadVideo(this)">
+<div class="desc" id="videoInfo">Bisa WebM / MP4</div>
+</div>
+<div class="file-group">
+<label>🖼️ 4. GAMBAR BACKGROUND (JPG/PNG) Opsional</label>
+<input type="file" id="imageFile" accept="image/*" onchange="loadImage(this)">
+<div class="desc">Jika tidak pakai video</div>
+</div>
+</div>
+</div>
+<footer>Dibuat oleh : <b>Ibnu Gozali</b> | Diberdayakan oleh : <b>babloe.com 2026</b> | v3.2 Fix Play Engine</footer>
+<script>
+let lyrics=[], state={duration:0, current:0, playing:false, raf:null, img:null};
+const elVideo=document.getElementById('realVideo');
+const elVocal=document.getElementById('audioVocal');
+const elMusic=document.getElementById('audioMusic');
+const canvas=document.getElementById('canvasPreview');
+const ctx=canvas.getContext('2d');
+const overlay=document.getElementById('lyricOverlay');
+function handleLogin(r){document.getElementById('authArea').innerHTML='<div style=color:#ffcc00;font-weight:700>✅ Login Sukses</div>'}
+function parseLyrics(){
+  const txt=document.getElementById('lyricsInput').value.trim().split('\n').filter(l=>l.trim());
+  lyrics=txt;
+  document.getElementById('parsedBox').innerHTML=txt.map((l,i)=>`<div style="padding:2px;${i===0?'color:var(--yellow)':''}">${i+1}. ${l}</div>`).join('');
+  if(txt[0]) overlay.innerText=txt[0];
+  updateDuration();
+}
+function updateDuration(){
+  let max=0;
+  if(elVideo.duration) max=Math.max(max, elVideo.duration);
+  if(elMusic.duration) max=Math.max(max, elMusic.duration);
+  if(elVocal.duration) max=Math.max(max, elVocal.duration);
+  if(max>0){ state.duration=max; document.getElementById('timeDisplay').innerText='00:00 / '+format(max); }
+}
+function format(s){ if(!s||isNaN(s)) return '00:00'; let m=Math.floor(s/60), sec=Math.floor(s%60); return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
+function loadVocal(input){
+  const f=input.files[0]; if(!f) return;
+  const url=URL.createObjectURL(f);
+  elVocal.src=url; elVocal.load();
+  document.getElementById('laneVocal').innerText='🎤 VOCAL - '+f.name;
+  document.getElementById('vocalInfo').innerText=f.name+' ('+(f.size/1024/1024).toFixed(2)+' MB)';
+  elVocal.onloadedmetadata=updateDuration;
+}
+function loadMusic(input){
+  const f=input.files[0]; if(!f) return;
+  const url=URL.createObjectURL(f);
+  elMusic.src=url; elMusic.load();
+  document.getElementById('laneMusic').innerText='🎵 MUSIK - '+f.name;
+  document.getElementById('musicInfo').innerText=f.name+' ('+(f.size/1024/1024).toFixed(2)+' MB)';
+  elMusic.onloadedmetadata=updateDuration;
+}
+function loadVideo(input){
+  const f=input.files[0]; if(!f) return;
+  const url=URL.createObjectURL(f);
+  elVideo.src=url; elVideo.load(); elVideo.style.display='block';
+  document.getElementById('laneVideo').innerText='🎬 VIDEO - '+f.name;
+  document.getElementById('videoInfo').innerText=f.name+' ('+(f.size/1024/1024).toFixed(1)+' MB)';
+  elVideo.onloadedmetadata=()=>{ updateDuration(); drawFrame(); };
+}
+function loadImage(input){
+  const f=input.files[0]; if(!f) return;
+  const url=URL.createObjectURL(f);
+  const img=new Image(); img.src=url; img.onload=()=>{ state.img=img; drawFrame(); };
+}
+function drawFrame(){
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  if(state.img){ ctx.drawImage(state.img,0,0,canvas.width,canvas.height); }
+  if(elVideo.readyState>=2 && elVideo.src){ try{ ctx.drawImage(elVideo,0,0,canvas.width,canvas.height); }catch(e){} }
+}
+function drawLoop(){
+  if(!state.playing) return;
+  drawFrame();
+  state.raf=requestAnimationFrame(drawLoop);
+}
+function getLyricIndexByTime(t){
+  if(lyrics.length===0) return 0;
+  const off=parseFloat(document.getElementById('lyricOffset').value||0);
+  const adjusted=t+off;
+  const dur=state.duration||(lyrics.length*2);
+  const pct=Math.min(Math.max(adjusted/dur,0),0.999);
+  return Math.floor(pct*lyrics.length);
+}
+async function togglePlay(){
+  if(state.playing){ pauseAll(); return; }
+  if(!elVideo.src &&!elMusic.src &&!elVocal.src){ alert('Load dulu minimal 1 file: Video / Musik!'); return; }
+  state.playing=true;
+  document.getElementById('playBtn').innerText='⏸️ Pause';
+  const vocalOff=parseFloat(document.getElementById('vocalOffset').value||0);
+  const musicOff=parseFloat(document.getElementById('musicOffset').value||0);
+  try{
+    if(elMusic.src){ elMusic.currentTime=Math.max(state.current+musicOff,0); await elMusic.play(); }
+    if(elVocal.src){
+      elVocal.currentTime=Math.max(state.current+vocalOff,0);
+      elVocal.muted=document.getElementById('muteVocal').checked;
+      await elVocal.play();
+    }
+    if(elVideo.src){ elVideo.currentTime=Math.max(state.current,0); elVideo.muted=true; await elVideo.play(); }
+  }catch(e){ console.log('play error',e); }
+  const start=Date.now()-state.current*1000;
+  function tick(){
+    if(!state.playing) return;
+    state.current=(Date.now()-start)/1000;
+    const idx=getLyricIndexByTime(state.current);
+    if(lyrics[idx]) overlay.innerText=lyrics[idx];
+    const pct=state.duration?Math.min(state.current/state.duration,1):0;
+    document.getElementById('playhead').style.left=(pct*100)+'%';
+    document.getElementById('timeDisplay').innerText=format(state.current)+' / '+format(state.duration);
+    if(state.current>=state.duration){ stopAll(); return; }
+    requestAnimationFrame(tick);
+  }
+  drawLoop();
+  tick();
+}
+function pauseAll(){
+  state.playing=false;
+  document.getElementById('playBtn').innerText='▶️ Play';
+  elVideo.pause(); elMusic.pause(); elVocal.pause();
+  if(state.raf) cancelAnimationFrame(state.raf);
+}
+function stopAll(){
+  state.playing=false;
+  state.current=0;
+  document.getElementById('playBtn').innerText='▶️ Play';
+  elVideo.pause(); elMusic.pause(); elVocal.pause();
+  elVideo.currentTime=0; elMusic.currentTime=0; elVocal.currentTime=0;
+  document.getElementById('playhead').style.left='0%';
+  document.getElementById('timeDisplay').innerText='00:00 / '+format(state.duration);
+  if(lyrics[0]) overlay.innerText=lyrics[0];
+  drawFrame();
+}
+function seek(e){
+  const r=e.currentTarget.getBoundingClientRect();
+  const pct=(e.clientX-r.left)/r.width;
+  state.current=pct*state.duration;
+  elVideo.currentTime=state.current;
+  elMusic.currentTime=state.current;
+  elVocal.currentTime=state.current;
+  document.getElementById('playhead').style.left=(pct*100)+'%';
+  const idx=getLyricIndexByTime(state.current);
+  if(lyrics[idx]) overlay.innerText=lyrics[idx];
+  drawFrame();
+  document.getElementById('timeDisplay').innerText=format(state.current)+' / '+format(state.duration);
+}
+function nudge(d){
+  let off=parseFloat(document.getElementById('lyricOffset').value||0)+d;
+  document.getElementById('lyricOffset').value=off.toFixed(1);
+}
+function renderVideo(){ alert('Render MP4 full akan pakai FFmpeg wasm di v3.3. Untuk sekarang Play dulu untuk cek sinkronisasi!'); }
+parseLyrics();
+drawFrame();
+</script>
+</body>
+</html>
