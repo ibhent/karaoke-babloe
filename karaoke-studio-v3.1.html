@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karaoke Babloe v3.1 - Ibnu Gozali</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{--bg:#0a0e1a;--panel:#141a2b;--panel2:#1c233a;--yellow:#ffcc00;--blue:#00c6ff;--text:#e6e8f0;--muted:#8a90a8;--border:#222c4a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(90deg,#0f172f,#141a2b);border-bottom:2px solid var(--yellow);padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:22px;font-weight:700;letter-spacing:1px}
+header h1 span{color:var(--yellow)}
+.main{flex:1;display:grid;grid-template-columns:300px 1fr 340px;gap:12px;padding:12px;height:calc(100vh - 90px)}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;overflow:auto}
+.panel-title{font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);padding-bottom:6px}
+textarea#lyricsInput{width:100%;height:220px;background:#0b1020;color:#d0d6f0;border:1px solid var(--border);border-radius:8px;padding:10px;font-family:'JetBrains Mono',monospace;font-size:12px;resize:none;line-height:1.6}
+.btn{border:none;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:12px;transition:.2s}
+.btn-yellow{background:var(--yellow);color:#111}
+.btn-blue{background:var(--blue);color:#111}
+.btn-outline{background:var(--panel2);border:1px solid var(--border);color:var(--text)}
+.row{display:flex;gap:6px}
+input[type="range"]{width:100%;accent-color:var(--yellow)}
+.file-group{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px}
+.file-group label{font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px}
+.file-group.desc{font-size:10px;color:#6b7280;margin-top:3px}
+.file-group input{width:100%;font-size:11px}
+.preview{position:relative;background:#000;border-radius:12px;border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.preview-stage{flex:1;background:#000;display:flex;align-items:center;justify-content:center;position:relative}
+#canvasPreview{width:100%;height:100%;object-fit:contain}
+.lyric-overlay{position:absolute;bottom:20%;left:0;right:0;text-align:center;font-weight:700;font-size:clamp(18px,3vw,42px);text-shadow:0 2px 10px #000,0 0 20px #000}
+.timeline-area{background:#101528;border-top:1px solid var(--border);padding:10px}
+.timeline-header{display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-bottom:6px}
+.timeline-track{position:relative;height:48px;background:#0b1020;border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer}
+.track-lane{position:absolute;left:0;right:0;height:16px;font-size:9px;display:flex;align-items:center;padding-left:6px;color:#fff}
+.lane-vocal{top:2px;background:linear-gradient(90deg,#ffcc0055,#ffcc00);color:#000}
+.lane-music{top:18px;background:linear-gradient(90deg,#00c6ff55,#00c6ff);color:#000}
+.lane-video{top:34px;background:linear-gradient(90deg,#8b5cf655,#8b5cf6)}
+.playhead{position:absolute;top:0;bottom:0;width:2px;background:#fff;left:0;pointer-events:none;z-index:5}
+.time-controls{display:flex;gap:6px;margin-top:8px;align-items:end}
+.time-controls input{width:70px;background:#0b1020;border:1px solid var(--border);border-radius:4px;color:var(--text);padding:4px;font-size:11px;text-align:center}
+footer{text-align:center;padding:8px;font-size:11px;color:var(--muted);border-top:1px solid var(--border)}
+footer b{color:var(--yellow)}
+</style>
+</head>
+<body>
+<header>
+<h1>KARAOKE <span>BABLOE v3.1</span></h1>
+<div id="authArea">
+<div id="g_id_onload" data-client_id="794101225266-pjd3pqov3ac21g24kaidsibrdd2oosru.apps.googleusercontent.com" data-callback="handleLogin"></div>
+<div class="g_id_signin" data-type="standard" data-theme="filled_white" data-text="signin_with" data-shape="rectangular"></div>
+</div>
+</header>
+
+<div class="main">
+<div class="panel">
+<div class="panel-title">01 • Lirik Lagu</div>
+<textarea id="lyricsInput">Berawal dari manisnya kasih sayang
+Terlanjur kita hanyut dan terbuai
+Kucoba bertahan mendampingi dirimu
+Walau kadang kala tak seiring jalan
+Kucari dan selalu kucari jalan terbaik
+Agar tiada penyesalan dan air mata
+Agar tiada penyesalan dan air mata</textarea>
+<div class="row">
+<button class="btn btn-yellow" style="flex:1" onclick="parseLyrics()">Parse Lirik</button>
+<button class="btn btn-outline" style="flex:1" onclick="undoLyrics()">Undo 99x</button>
+</div>
+<div class="row" style="align-items:center">
+<span style="font-size:10px;width:40px">Size</span><input type="range" id="fontSize" min="12" max="72" value="36" oninput="updatePreview()">
+<span style="font-size:10px;width:40px">Speed</span><input type="range" id="speed" min="0.1" max="2" step="0.1" value="0.5">
+</div>
+<div class="row">
+<input id="inYellow" value="0.5" style="width:50%"><input id="inBlue" value="0.5" style="width:50%">
+</div>
+<div class="row">
+<button class="btn btn-yellow" style="flex:1">Kuning Masuk</button>
+<button class="btn btn-blue" style="flex:1">Biru Masuk</button>
+</div>
+<div style="background:#0b1020;border-radius:6px;height:80px;border:1px solid var(--border)" id="parsedBox"></div>
+</div>
+
+<div class="preview">
+<div class="preview-stage">
+<canvas id="canvasPreview" width="1280" height="720"></canvas>
+<div class="lyric-overlay" id="lyricOverlay">Preview Lirik Disini</div>
+</div>
+<div class="timeline-area">
+<div class="timeline-header">
+<span>🎛️ TIMELINE EDITOR - Penyesuaian Waktu</span>
+<span id="timeDisplay">00:00 / 00:00</span>
+</div>
+<div class="timeline-track" id="timelineTrack" onclick="seek(event)">
+<div class="playhead" id="playhead"></div>
+<div class="track-lane lane-vocal">🎤 VOCAL - 00:00</div>
+<div class="track-lane lane-music">🎵 MUSIK - 00:00</div>
+<div class="track-lane lane-video">🎬 VIDEO - 00:00</div>
+</div>
+<div class="time-controls">
+<button class="btn btn-outline" onclick="nudge(-0.1)">-0.1s</button>
+<button class="btn btn-outline" onclick="nudge(-0.5)">-0.5s</button>
+<div style="flex:1"></div>
+<label style="font-size:10px">Offset Lirik<br><input id="lyricOffset" type="number" value="0" step="0.1"></label>
+<label style="font-size:10px">Offset Vocal<br><input id="vocalOffset" type="number" value="0" step="0.1"></label>
+<label style="font-size:10px">Offset Musik<br><input id="musicOffset" type="number" value="0" step="0.1"></label>
+<div style="flex:1"></div>
+<button class="btn btn-outline" onclick="nudge(0.1)">+0.1s</button>
+<button class="btn btn-outline" onclick="nudge(0.5)">+0.5s</button>
+</div>
+<div class="row" style="margin-top:8px">
+<button class="btn btn-yellow" style="flex:1" id="playBtn" onclick="togglePlay()">▶️ Play</button>
+<button class="btn btn-blue" style="flex:1" onclick="renderVideo()">⏺️ Render MP4</button>
+</div>
+</div>
+</div>
+
+<div class="panel">
+<div class="panel-title">02 • Source Files</div>
+<div class="file-group">
+<label>🎤 1. VOCAL PANDUAN - File Suara Penyanyi Asli (MP3/WAV)</label>
+<input type="file" id="vocalFile" accept="audio/*" onchange="loadFile(this,'vocal')">
+<div class="desc">Dipakai untuk panduan nada. Nanti di-mute saat render final. Contoh: audio [vocals].mp3</div>
+</div>
+<div class="file-group">
+<label>🎵 2. MUSIK INSTRUMENT - File Musik Tanpa Vokal (MP3/WAV)</label>
+<input type="file" id="musicFile" accept="audio/*" onchange="loadFile(this,'music')">
+<div class="desc">Musik karaoke asli tanpa vokal. Ini yang akan jadi audio final. Contoh: audio [music].mp3</div>
+</div>
+<div class="file-group">
+<label>🎬 3. VIDEO BACKGROUND - Video Klip / Visual (MP4/MOV)</label>
+<input type="file" id="videoFile" accept="video/*" onchange="loadFile(this,'video')">
+<div class="desc">Video background. Bisa video klip asli atau stock video. Contoh: MUSIK KARAOKE TERBAIK.mp4</div>
+</div>
+<div class="file-group">
+<label>🖼️ 4. GAMBAR BACKGROUND - (Opsional) Jika tidak pakai video</label>
+<input type="file" id="imageFile" accept="image/*" onchange="loadFile(this,'image')">
+<div class="desc">Dipakai kalau tidak ada video. Bisa JPG/PNG. Akan jadi background statis.</div>
+</div>
+<div style="margin-top:auto;background:#0b1020;border-radius:8px;padding:8px;border:1px dashed var(--border)">
+<div style="font-size:11px;font-weight:700;color:var(--yellow)">💡 CARA PAKAI TIMELINE:</div>
+<div style="font-size:10px;color:var(--muted);line-height:1.5;margin-top:4px">
+• Klik timeline untuk lompat ke detik tertentu<br>
+• Pakai Offset untuk majuin/mundurin lirik vs musik<br>
+• Tombol -0.1s / +0.1s untuk fine-tuning<br>
+• Semua sinkron otomatis saat Render
+</div>
+</div>
+</div>
+</div>
+
+<footer>Dibuat oleh : <b>Ibnu Gozali</b> | Diberdayakan oleh : <b>babloe.com 2026</b> | v3.1 Fix UI + Timeline</footer>
+
+<script>
+let state={vocal:null,music:null,video:null,image:null,playing:false,current:0,duration:0}
+function handleLogin(r){document.getElementById('authArea').innerHTML='<div style=color:#ffcc00;font-weight:700>✅ Login Sukses</div>'}
+function parseLyrics(){const t=document.getElementById('lyricsInput').value;document.getElementById('parsedBox').innerHTML='<div style=font-size:11px;padding:6px>'+t.split('\n').map((l,i)=>`<div>${i+1}. ${l}</div>`).join('')+'</div>';document.getElementById('lyricOverlay').innerText=t.split('\n')[0]||'Preview'}
+function updatePreview(){document.getElementById('lyricOverlay').style.fontSize=document.getElementById('fontSize').value+'px'}
+function undoLyrics(){}
+function loadFile(input,type){state[type]=input.files[0]; if(type==='video'){const url=URL.createObjectURL(input.files[0]);let v=document.createElement('video');v.src=url;v.onloadedmetadata=()=>{state.duration=v.duration;document.getElementById('timeDisplay').innerText='00:00 / '+format(v.duration)};}}
+function format(s){let m=Math.floor(s/60),sec=Math.floor(s%60);return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')}
+function seek(e){const r=e.currentTarget.getBoundingClientRect();const pct=(e.clientX-r.left)/r.width;document.getElementById('playhead').style.left=(pct*100)+'%';state.current=pct*state.duration}
+function nudge(d){let off=parseFloat(document.getElementById('lyricOffset').value||0)+d;document.getElementById('lyricOffset').value=off.toFixed(1)}
+function togglePlay(){state.playing=!state.playing;document.getElementById('playBtn').innerText=state.playing?'⏸️ Pause':'▶️ Play';if(state.playing){let start=Date.now()-state.current*1000; let iv=setInterval(()=>{if(!state.playing){clearInterval(iv);return}state.current=(Date.now()-start)/1000;let pct=Math.min(state.current/state.duration,1);document.getElementById('playhead').style.left=(pct*100)+'%';document.getElementById('timeDisplay').innerText=format(state.current)+' / '+format(state.duration);if(pct>=1){state.playing=false;document.getElementById('playBtn').innerText='▶️ Play';clearInterval(iv)}},50)}}
+function renderVideo(){alert('Render akan pakai:\n- Offset Lirik: '+document.getElementById('lyricOffset').value+'s\n- Offset Vocal: '+document.getElementById('vocalOffset').value+'s\n- Offset Musik: '+document.getElementById('musicOffset').value+'s\n\nFitur render MP4 full segera aktif!')}
+parseLyrics()
+</script>
+</body>
+</html>
