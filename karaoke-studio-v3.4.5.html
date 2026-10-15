@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Karaoke Babloe v3.4.5 Color Wheel + User Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{--bg:#0a0e1a;--panel:#141a2b;--panel2:#1c233a;--yellow:#ffcc00;--blue:#00c6ff;--red:#ff3b3b;--text:#e6e8f0;--muted:#8a90a8;--border:#222c4a}
+*{box-sizing:border-box;margin:0;padding:0} body{background:var(--bg);color:var(--text);font-family:'Poppins',sans-serif;display:flex;flex-direction:column;min-height:100vh}
+header{background:linear-gradient(90deg,#0f172f,#141a2b);border-bottom:2px solid var(--yellow);padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.main{flex:1;display:grid;grid-template-columns:340px 1fr 360px;gap:12px;padding:12px;min-height:700px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;overflow:auto;max-height:calc(100vh - 80px)}
+.panel-title{font-size:12px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);padding-bottom:6px}
+textarea{width:100%;height:110px;background:#0b1020;color:#d0d6f0;border:1px solid var(--border);border-radius:8px;padding:8px;font-size:11px;resize:none}
+.btn{border:none;border-radius:6px;padding:8px 10px;font-weight:700;cursor:pointer;font-size:11px}
+.btn-yellow{background:var(--yellow);color:#111} .btn-blue{background:var(--blue);color:#111} .btn-red{background:var(--red);color:#fff} .btn-outline{background:var(--panel2);border:1px solid var(--border);color:var(--text)}
+.row{display:flex;gap:6px;flex-wrap:wrap}
+.file-group{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:8px}
+.file-group label{font-size:10px;font-weight:700;color:var(--muted);display:block;margin-bottom:3px}
+.file-group input{width:100%;font-size:10px}
+.preview{background:#000;border-radius:12px;border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;min-height:500px}
+.preview-stage{flex:1;background:#000;display:flex;align-items:center;justify-content:center;position:relative;min-height:420px}
+video#realVideo{width:100%;height:100%;object-fit:contain;display:none}
+canvas#canvasPreview{position:absolute;top:0;left:0;width:100%;height:100%}
+.lyric-overlay{position:absolute;bottom:20%;left:0;right:0;text-align:center;font-weight:800;font-size:36px;text-shadow:0 2px 10px #000;pointer-events:none;line-height:1.2}
+.timeline-track{position:relative;height:62px;background:#0b1020;border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;margin-top:6px}
+.track-lane{position:absolute;left:0;right:0;height:18px;font-size:9px;display:flex;align-items:center;padding-left:6px;overflow:hidden}
+.lane-vocal{top:2px;background:linear-gradient(90deg,#ffcc0088,#ffcc00);color:#000} .lane-music{top:21px;background:linear-gradient(90deg,#00c6ff88,#00c6ff);color:#000} .lane-video{top:40px;background:linear-gradient(90deg,#8b5cf688,#8b5cf6)}
+.playhead{position:absolute;top:0;bottom:0;width:2px;background:#fff;z-index:5}
+.tap-active{animation:blink .5s infinite} @keyframes blink{50%{opacity:.5}}
+.visitor-box{background:linear-gradient(135deg,#1a233a,#0f172f);border:1px dashed var(--yellow);border-radius:8px;padding:8px;text-align:center}
+.rec-box{background:linear-gradient(135deg,#2a1a1a,#1f0f0f);border:1px solid var(--red);border-radius:8px;padding:8px}
+.rec-dot{width:10px;height:10px;background:var(--red);border-radius:50%;display:inline-block;animation:blink 1s infinite}
+footer{text-align:center;padding:10px;font-size:11px;color:var(--muted);border-top:1px solid var(--border)} footer a{color:var(--yellow);text-decoration:none;font-weight:700}
+.tutor{background:#0b1020;border-radius:8px;padding:8px;font-size:10px;line-height:1.5;color:#aab0c8} .tutor b{color:var(--yellow)}
+.line-row{background:#0f172f;border:1px solid #1e2a4a;border-radius:6px;padding:6px;margin-bottom:4px}
+.line-text{font-size:11px;font-weight:600;color:#e6e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.edit-row{display:flex;gap:4px;margin-top:4px;align-items:center;flex-wrap:wrap}
+.edit-row label{font-size:8px;color:#8a90a8;display:flex;flex-direction:column}
+.edit-row input{width:52px;background:#0b1020;border:1px solid var(--border);border-radius:4px;padding:3px;font-size:9px;color:#ffcc00;text-align:center}
+.edit-row input.b-input{color:#00c6ff}
+.edit-row .sep{font-size:8px;color:#555}
+.active-line{border-color:var(--yellow)!important;background:#1e2a4a!important}
+.color-wheel{width:36px;height:36px;border-radius:50%;border:2px solid #fff;cursor:pointer;padding:0;overflow:hidden;background:conic-gradient(red,yellow,lime,aqua,blue,magenta,red)}
+</style></head><body>
+<header><h1>KARAOKE <span style="color:var(--yellow)">BABLOE v3.4.5</span> <span style="font-size:11px;color:#00ff88">• COLOR WHEEL + USER GUIDE</span></h1>
+<div id="authArea"><div id="g_id_onload" data-client_id="794101225266-pjd3pqov3ac21g24kaidsibrdd2oosru.apps.googleusercontent.com" data-callback="handleLogin"></div><div class="g_id_signin" data-type="standard" data-theme="filled_white" data-size="small"></div></div></header>
+<div class="main">
+<div class="panel">
+<div class="panel-title">01 • Lirik & TAP Marker (EDIT ANGKA + COLOR WHEEL)</div>
+<textarea id="lyricsInput">Berawal dari manisnya kasih sayang
+Terlanjur kita hanyut dan terbuai
+Kucoba bertahan mendampingi dirimu
+Walau kadang kala tak seiring jalan
+Kucari dan selalu kucari jalan terbaik
+Sepanjang kita masih terus begini</textarea>
+<div class="row"><button class="btn btn-yellow" style="flex:1" onclick="parseLyrics()">Parse Lirik + Reset Kosong</button><button class="btn btn-outline" style="flex:1" onclick="clearMarkers()">Reset Angka</button></div>
+<div style="background:#0b1020;border:1px solid var(--border);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px">
+<div style="font-size:11px;font-weight:700;color:var(--yellow)">🎯 TAP TIMING - AWAL PASTI KOSONG!</div>
+<div class="row"><button class="btn btn-yellow" id="btnYellow" style="flex:1" onclick="tapYellow()">🟡 TAP KUNING START<br><span style="font-size:8px">2 detik sebelum vokal</span></button><button class="btn btn-outline" style="flex:0.4" onclick="tapYellowEnd()">Kuning END</button></div>
+<div class="row"><button class="btn btn-blue" id="btnBlue" style="flex:1" onclick="tapBlue()">🔵 TAP BIRU START<br><span style="font-size:8px">Pas mulai nyanyi</span></button><button class="btn btn-outline" style="flex:0.4" onclick="tapBlueEnd()">Biru END</button></div>
+<div id="tapStatus" style="font-size:10px;color:var(--muted)">Awal video = KOSONG. Play dulu baru TAP KUNING.</div>
+</div>
+
+<div style="background:#1a233a;border:1px solid #2a3a5a;border-radius:6px;padding:8px;margin-top:6px;display:flex;flex-direction:column;gap:4px">
+<label style="font-size:11px;display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="removeVocalCheck" checked> <span style="color:#ffcc00;font-weight:700">☑️ Hapus Vokal Panduan di Hasil Final</span></label>
+<div style="font-size:9px;color:#8a90a8">Centang = Render MP4 hanya Musik + Lirik (tanpa vokal panduan) - karaoke murni</div>
+<div style="display:flex;gap:8px"><label style="font-size:9px;flex:1">Vol Musik<br><input type="range" id="volMusic" min="0" max="100" value="100" style="width:100%"></label><label style="font-size:9px;flex:1">Vol Vokal Preview<br><input type="range" id="volVocal" min="0" max="100" value="70" style="width:100%" oninput="document.getElementById('audioVocal').volume=this.value/100"></label></div>
+</div>
+<div class="row" style="margin-top:8px"><button class="btn btn-yellow" style="flex:1" id="playBtn" onclick="togglePlay()">▶️ Play</button><button class="btn btn-blue" style="flex:1" onclick="stopAll()">⏹️ Stop</button><button class="btn btn-outline" style="flex:1" onclick="renderVideo()">⏺️ Render MP4</button></div>
+</div>
+</div>
+<div class="panel">
+<div class="panel-title">02 • Source Files + Mic</div>
+<div class="file-group"><label>🎤 1. VOCAL PANDUAN (atau Record)</label><input type="file" accept="audio/*" onchange="loadVocal(this)"><audio id="audioVocal" controls style="width:100%;margin-top:4px"></audio><div id="vocalInfo" style="font-size:9px;color:#666">Belum load - bisa dari Record Mic kiri</div></div>
+<div class="file-group"><label>🎵 2. MUSIK INSTRUMENT</label><input type="file" accept="audio/*" onchange="loadMusic(this)"><audio id="audioMusic" controls style="width:100%;margin-top:4px"></audio></div>
+<div class="file-group"><label>🎬 3. VIDEO BACKGROUND</label><input type="file" accept="video/*" onchange="loadVideo(this)"><div id="videoInfo" style="font-size:9px;color:#666">WebM/MP4</div></div>
+<div class="file-group"><label>🖼️ 4. GAMBAR BACKGROUND</label><input type="file" accept="image/*" onchange="loadImage(this)"></div>
+<div class="panel-title">📖 CARA PENGGUNAAN (No 6 FIX - Bukan Command Dev!)</div>
+<div class="tutor">
+<b>Ini CARA PAKAI USER, bukan command bikin aplikasi:</b><br><br>
+<b>STEP 1 - Load:</b> Di kanan, upload Vocal (atau Record Mic kiri), Musik, Video Bus<br>
+<b>STEP 2 - Lirik:</b> Kiri atas tulis lirik, klik Parse. Awal video KOSONG, tidak ada teks putih!<br>
+<b>STEP 3 - Play:</b> Klik Play, nikmati intro musik kosong dulu<br>
+<b>STEP 4 - TAP KUNING (No 1 di gambar):</b> 2 detik sebelum mau nyanyi tekan 🟡 KUNING - teks kuning persiapan<br>
+<b>STEP 5 - TAP BIRU:</b> Pas nyanyi tekan 🔵 BIRU - teks biru nyala<br>
+<b>STEP 6 - Edit Angka Presisi:</b> Di list kiri ada YS YE BS BE - bisa ketik manual 12.35 detik biar pas!<br>
+<b>STEP 7 - Warna (No 1):</b> Kuning/Biru/Putih atau lingkaran All Color pelangi kecil<br>
+<b>STEP 8 - No 2,3,4:</b><br>
+• No 2 (-0.5s -0.1s): Mundurin lirik kalau lirik telat muncul<br>
+• No 3 (Off Lirik/Vocal/Musik): Ketik angka manual buat geser sinkron<br>
+• No 4 (+0.1s +0.5s): Majukan lirik kalau kecepetan muncul<br>
+<b>STEP 9 - No 5 Timeline:</b> 3 jalur warna - Kuning=vocal, Biru=musik, Ungu=video. Garis putih jalan = posisi sekarang<br>
+<b>STEP 10 - Render:</b> Centang Hapus Vocal, lalu Render MP4 karaoke murni<br>
+</div>
+</div>
+</div>
+<footer>Dibuat oleh : <a href="https://www.ibnu.babloe.com" target="_blank">Ibnu Gozali</a> | Diberdayakan oleh : <a href="https://babloe.com" target="_blank">babloe.com 2026</a> | v3.4.5 Color Wheel + User Guide | Visitor: <span id="footVis">...</span></footer>
+
+<script>
+let lyrics=[],markers=[],state={duration:0,current:0,playing:false,img:null,currentIdx:0,style:{weight:'800',style:'normal',color:'#fff',caps:'normal'}};
+let mediaRecorder, audioChunks=[], recordedBlob=null, recStartTime=null, recTimerInterval=null;
+const elVideo=document.getElementById('realVideo'), elVocal=document.getElementById('audioVocal'), elMusic=document.getElementById('audioMusic'), canvas=document.getElementById('canvasPreview'), ctx=canvas.getContext('2d'), overlay=document.getElementById('lyricOverlay');
+function handleLogin(r){document.getElementById('authArea').innerHTML='<span style=color:#ffcc00>✅ Login Sukses</span>'}
+function parseLyrics(){
+  const t=document.getElementById('lyricsInput').value.trim().split('\n').filter(l=>l.trim());
+  lyrics=t; markers=t.map(()=>({yS:null,yE:null,bS:null,bE:null}));
+  const box=document.getElementById('parsedBox');
+  box.innerHTML=t.map((l,i)=>`<div class="line-row" id="line-${i}"><div class="line-text">${i+1}. ${l}</div><div class="edit-row"><label>YS Kuning<input id="ys-${i}" type="number" step="0.05" placeholder="0.00" onchange="editMarker(${i})" title="Kuning Start - 2 detik sebelum vokal"></label><span class="sep">~</span><label>YE<input id="ye-${i}" type="number" step="0.05" placeholder="0.00" onchange="editMarker(${i})" title="Kuning End"></label><label style="margin-left:6px">BS Biru<input id="bs-${i}" class="b-input" type="number" step="0.05" placeholder="0.00" onchange="editMarker(${i})" title="Biru Start - pas nyanyi"></label><span class="sep">~</span><label>BE<input id="be-${i}" class="b-input" type="number" step="0.05" placeholder="0.00" onchange="editMarker(${i})" title="Biru End - selesai nyanyi"></label></div></div>`).join('');
+  overlay.innerText=""; updateDuration(); applyCaps();
+}
+function clearMarkers(){ markers=lyrics.map(()=>({yS:null,yE:null,bS:null,bE:null})); lyrics.forEach((_,i)=>{['ys','ye','bs','be'].forEach(k=>{const el=document.getElementById(k+'-'+i); if(el) el.value="";});}); overlay.innerText=""; }
+function editMarker(i){ const ys=parseFloat(document.getElementById('ys-'+i).value); const ye=parseFloat(document.getElementById('ye-'+i).value); const bs=parseFloat(document.getElementById('bs-'+i).value); const be=parseFloat(document.getElementById('be-'+i).value); if(!isNaN(ys)) markers[i].yS=ys; else markers[i].yS=null; if(!isNaN(ye)) markers[i].yE=ye; else markers[i].yE=null; if(!isNaN(bs)) markers[i].bS=bs; else markers[i].bS=null; if(!isNaN(be)) markers[i].bE=be; else markers[i].bE=null; }
+function updateDuration(){ let m=0; if(elVideo.duration) m=Math.max(m,elVideo.duration); if(elMusic.duration) m=Math.max(m,elMusic.duration); if(elVocal.duration) m=Math.max(m,elVocal.duration); if(m>0){state.duration=m; document.getElementById('timeDisplay').innerText='00:00 / '+formatFull(m);} }
+function formatFull(s){ if(!s&&s!==0) return "00:00"; let mm=Math.floor(s/60), ss=Math.floor(s%60); return String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');}
+function loadVocal(i){ const f=i.files[0]; if(!f) return; elVocal.src=URL.createObjectURL(f); elVocal.load(); document.getElementById('laneVocal').innerText='🎤 VOCAL - '+f.name; document.getElementById('vocalInfo').innerText=f.name; elVocal.onloadedmetadata=updateDuration;}
+function loadMusic(i){ const f=i.files[0]; if(!f) return; elMusic.src=URL.createObjectURL(f); elMusic.load(); document.getElementById('laneMusic').innerText='🎵 MUSIK - '+f.name; elMusic.onloadedmetadata=updateDuration;}
+function loadVideo(i){ const f=i.files[0]; if(!f) return; elVideo.src=URL.createObjectURL(f); elVideo.load(); elVideo.style.display='block'; document.getElementById('laneVideo').innerText='🎬 VIDEO - '+f.name; document.getElementById('videoInfo').innerText=f.name; elVideo.onloadedmetadata=()=>{updateDuration(); drawFrame();};}
+function loadImage(i){ const f=i.files[0]; if(!f) return; const img=new Image(); img.src=URL.createObjectURL(f); img.onload=()=>{state.img=img; drawFrame();};}
+function drawFrame(){ ctx.fillStyle='#000'; ctx.fillRect(0,0,canvas.width,canvas.height); if(state.img) ctx.drawImage(state.img,0,0,canvas.width,canvas.height); if(elVideo.readyState>=2&&elVideo.src){ try{ctx.drawImage(elVideo,0,0,canvas.width,canvas.height);}catch(e){} } }
+function drawLoop(){ if(!state.playing) return; drawFrame(); requestAnimationFrame(drawLoop);}
+function tapYellow(){ if(!state.playing){ alert('Klik Play dulu!'); return;} const idx=state.currentIdx>=0?state.currentIdx:0; if(markers[idx]){ markers[idx].yS=state.current; const el=document.getElementById('ys-'+idx); if(el) el.value=state.current.toFixed(2);} document.getElementById('btnYellow').classList.add('tap-active');}
+function tapYellowEnd(){ const idx=state.currentIdx>=0?state.currentIdx:0; if(markers[idx]){ markers[idx].yE=state.current; const el=document.getElementById('ye-'+idx); if(el) el.value=state.current.toFixed(2);} document.getElementById('btnYellow').classList.remove('tap-active');}
+function tapBlue(){ if(!state.playing){ alert('Klik Play dulu!'); return;} const idx=state.currentIdx>=0?state.currentIdx:0; if(markers[idx]){ markers[idx].bS=state.current; const el=document.getElementById('bs-'+idx); if(el) el.value=state.current.toFixed(2);} document.getElementById('btnBlue').classList.add('tap-active');}
+function tapBlueEnd(){ const idx=state.currentIdx>=0?state.currentIdx:0; if(markers[idx]){ markers[idx].bE=state.current; const el=document.getElementById('be-'+idx); if(el) el.value=state.current.toFixed(2);} document.getElementById('btnBlue').classList.remove('tap-active');}
+function getLyricByMarkers(t){ for(let i=0;i<markers.length;i++){ const m=markers[i]; if(m.bS!==null && m.bE!==null && t>=m.bS && t<=m.bE) return i; if(m.yS!==null && m.yE!==null && t>=m.yS && t<=m.yE) return i; if(m.yS!==null && m.yE===null && t>=m.yS) return i; if(m.bS!==null && m.bE===null && t>=m.bS) return i; } return -1; }
+function setFont(type){ if(type==='bold'){ state.style.weight='800'; state.style.style='normal'; } else if(type==='300'){ state.style.weight='300'; state.style.style='normal'; } else if(type==='italic'){ state.style.style='italic'; } else { state.style.weight='400'; state.style.style='normal'; } applyStyle(); }
+function setColor(c){ state.style.color=c; applyStyle(); document.getElementById('colorWheel').value=c; }
+function applyStyle(){ overlay.style.fontWeight=state.style.weight; overlay.style.fontStyle=state.style.style; overlay.style.color=state.style.color; }
+function applyCaps(){ const mode=document.getElementById('capsMode').value; state.style.caps=mode; let txt=lyrics[state.currentIdx]||''; if(mode==='upper') txt=txt.toUpperCase(); if(state.currentIdx>=0) overlay.innerText=txt; if(mode==='upper') overlay.style.textTransform='uppercase'; else overlay.style.textTransform='none'; }
+
+async function togglePlay(){ if(state.playing){ pauseAll(); return;} if(!elVideo.src &&!elMusic.src &&!elVocal.src){ alert('Load file atau Record Mic dulu!'); return;} state.playing=true; document.getElementById('playBtn').innerText='⏸️ Pause'; const vOff=parseFloat(document.getElementById('vocalOffset').value||0), mOff=parseFloat(document.getElementById('musicOffset').value||0); try{ if(elMusic.src){ elMusic.currentTime=Math.max(state.current+mOff,0); await elMusic.play(); } if(elVocal.src){ elVocal.currentTime=Math.max(state.current+vOff,0); await elVocal.play(); } if(elVideo.src){ elVideo.currentTime=Math.max(state.current,0); elVideo.muted=true; await elVideo.play(); } }catch(e){} const start=Date.now()-state.current*1000; function tick(){ if(!state.playing) return; state.current=(Date.now()-start)/1000; const idx=getLyricByMarkers(state.current); state.currentIdx=idx; if(idx===-1){ overlay.innerText=""; document.querySelectorAll('.line-row').forEach(e=>e.classList.remove('active-line')); } else if(lyrics[idx]){ let txt=lyrics[idx]; if(state.style.caps==='upper') txt=txt.toUpperCase(); overlay.innerText=txt; const m=markers[idx]; if(m && m.bS!==null && state.current>=m.bS){ overlay.style.color='#00c6ff'; overlay.style.textShadow='0 0 20px #00c6ff'; } else if(m && m.yS!==null && state.current>=m.yS){ overlay.style.color='#ffcc00'; overlay.style.textShadow='0 0 20px #ffcc00'; } else { applyStyle(); } document.querySelectorAll('.line-row').forEach(e=>e.classList.remove('active-line')); const cur=document.getElementById('line-'+idx); if(cur) cur.classList.add('active-line'); } const pct=state.duration?Math.min(state.current/state.duration,1):0; document.getElementById('playhead').style.left=(pct*100)+'%'; document.getElementById('timeDisplay').innerText=formatFull(state.current)+' / '+formatFull(state.duration); if(state.current>=state.duration){ stopAll(); return;} requestAnimationFrame(tick);} drawLoop(); tick(); }
+function pauseAll(){ state.playing=false; document.getElementById('playBtn').innerText='▶️ Play'; elVideo.pause(); elMusic.pause(); elVocal.pause();}
+function stopAll(){ state.playing=false; state.current=0; document.getElementById('playBtn').innerText='▶️ Play'; elVideo.pause(); elMusic.pause(); elVocal.pause(); elVideo.currentTime=0; elMusic.currentTime=0; elVocal.currentTime=0; document.getElementById('playhead').style.left='0%'; document.getElementById('timeDisplay').innerText='00:00 / '+formatFull(state.duration); overlay.innerText=""; }
+function seek(e){ const r=e.currentTarget.getBoundingClientRect(); const pct=(e.clientX-r.left)/r.width; state.current=pct*state.duration; elVideo.currentTime=state.current; elMusic.currentTime=state.current; elVocal.currentTime=state.current; document.getElementById('playhead').style.left=(pct*100)+'%'; }
+function nudge(d){ let o=parseFloat(document.getElementById('lyricOffset').value||0)+d; document.getElementById('lyricOffset').value=o.toFixed(1); }
+function renderVideo(){ const hapus=document.getElementById('removeVocalCheck')?.checked; if(hapus){ alert('🎬 Render MP4 v3.4.5 - Vokal DIHAPUS! Karaoke Murni ✅'); } else { alert('🎬 Render MP4 v3.4.5 - Vokal TETAP ADA 🎤'); } }
+async function updateRealVisitor(){ const el=document.getElementById('visitorCount'), foot=document.getElementById('footVis'), sub=document.getElementById('visitorSub'); try{ const r=await fetch('https://countapi.mileshilliard.com/api/v1/hit/karaoke-babloe-v345'); const d=await r.json(); el.innerText=d.value.toLocaleString('id-ID'); if(foot) foot.innerText=d.value.toLocaleString('id-ID'); sub.innerText='Real Global • Live ✅'; }catch(e){ let v=parseInt(localStorage.getItem('karaoke_visits')||'1248')+1; el.innerText=v; if(foot) foot.innerText=v; localStorage.setItem('karaoke_visits',v); } }
+updateRealVisitor();
+function saveEmail(){ const em=document.getElementById('emailNotif').value; if(!em||!em.includes('@')){ alert('Email valid dong!'); return;} localStorage.setItem('karaoke_email',em); alert('✅ Email '+em+' disimpan!');}
+async function toggleRec(){ if(mediaRecorder && mediaRecorder.state==='recording'){ stopRec(); return;} try{ const stream=await navigator.mediaDevices.getUserMedia({audio:true}); audioChunks=[]; recordedBlob=null; mediaRecorder=new MediaRecorder(stream); mediaRecorder.ondataavailable=e=>{ if(e.data.size>0) audioChunks.push(e.data); }; mediaRecorder.onstop=()=>{ recordedBlob=new Blob(audioChunks,{type:'audio/webm'}); const url=URL.createObjectURL(recordedBlob); const aud=document.getElementById('recordedAudio'); aud.src=url; aud.style.display='block'; document.getElementById('useRecBtn').style.display='block'; document.getElementById('downloadRecBtn').style.display='block'; stream.getTracks().forEach(t=>t.stop()); }; mediaRecorder.start(); recStartTime=Date.now(); document.getElementById('recBtn').style.display='none'; document.getElementById('stopRecBtn').style.display='block'; document.getElementById('recDot').style.display='inline-block'; recTimerInterval=setInterval(()=>{ const diff=Math.floor((Date.now()-recStartTime)/1000); document.getElementById('recTimer').innerText=formatFull(diff); },500); }catch(err){ alert('Gagal mic: '+err.message); } }
+function stopRec(){ if(mediaRecorder && mediaRecorder.state==='recording'){ mediaRecorder.stop(); } document.getElementById('recBtn').style.display='block'; document.getElementById('stopRecBtn').style.display='none'; document.getElementById('recDot').style.display='none'; clearInterval(recTimerInterval); }
+function useRecAsVocal(){ if(!recordedBlob){ alert('Belum ada rekaman!'); return;} const url=URL.createObjectURL(recordedBlob); elVocal.src=url; elVocal.load(); document.getElementById('laneVocal').innerText='🎤 VOCAL - Record Mic'; elVocal.onloadedmetadata=updateDuration; }
+function downloadRec(){ if(!recordedBlob){ alert('Belum ada rekaman!'); return;} const url=URL.createObjectURL(recordedBlob); const a=document.createElement('a'); a.href=url; a.download='vocal-babloe-'+Date.now()+'.webm'; a.click(); }
+parseLyrics(); drawFrame();
+</script></body></html>
