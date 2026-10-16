@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Karaoke Babloe v3.5.2 - Video Fix 16:9 Auto Proporsional</title>
+<title>Karaoke Babloe v3.5.2 - Dark Mode Layout Fix</title>
 <style>
 :root{--bg:#070a14;--panel:#101528;--border:#1e2a4a;--yellow:#ffcc00;--blue:#00c6ff;--muted:#8899bb}
 *{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:#fff;font-family:Inter,sans-serif;display:flex;flex-direction:column;min-height:100vh}
@@ -23,12 +23,20 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 .rec-box{background:#1a0a0a;border:1px solid #442222;border-radius:8px;padding:6px}
 .vol-control{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700}
 .vol-control input[type=range]{flex:1;accent-color:var(--yellow)}
+.sidebar-img-box{width:100%;aspect-ratio:16/9;background:#0b1020;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:4px}
+.sidebar-img-box img{width:100%;height:100%;object-fit:cover;display:block}
 </style></head><body>
 <header><div style="font-weight:800;color:var(--yellow)">Karaoke Babloe v3.5.2</div><div style="font-size:10px"><a href="https://karaoke.babloe.com" target="_blank" style="color:var(--yellow);text-decoration:none">karaoke.babloe.com</a> • Ready GitHub</div></header>
 <div class="layout">
+<!-- PANEL KIRI -->
 <div class="panel">
 <div class="panel-title">01 • LIRIK & TAPPING</div>
-<textarea id="lyricsInput"></textarea>
+<textarea id="lyricsInput">Kucari dan selalu kucari jalan terbaik
+Sepanjang kita masih terus begini
+Berawal dari manisnya kasih sayang
+Terlanjur kita hanyut dan terbuai
+Kucoba bertahan mendampingi dirimu
+Walau kadang kala tak seiring jalan</textarea>
 <div class="row"><button class="btn btn-yellow" style="flex:1" onclick="parseLyrics()">Parse Lirik + Reset Kosong</button><button class="btn btn-outline" style="flex:0.5" onclick="clearMarkers()">Reset Angka</button></div>
 
 <div style="background:#0b1020;border:1px solid var(--border);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px">
@@ -48,6 +56,8 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 <div id="parsedBox" style="background:#0b1020;border-radius:8px;height:280px;border:1px solid var(--border);overflow:auto;padding:6px"></div>
 <div class="visitor-box"><div style="font-size:11px;font-weight:700;color:var(--yellow)">👁️ Visitor v3.5.2</div><div style="font-size:14px;font-weight:800;color:#fff">v3.5.2 Ready</div></div>
 </div>
+
+<!-- PANEL TENGAH (PREVIEW KOSONG UNTUK VIDEO UPLOAD) -->
 <div class="preview">
 <div class="preview-stage"><video id="realVideo" playsinline muted></video><canvas id="canvasPreview" width="1280" height="720"></canvas><div class="lyric-overlay" id="lyricOverlay"></div></div>
 <div style="background:#101528;border-top:2px solid var(--border);padding:10px">
@@ -74,7 +84,16 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 <div class="row" style="margin-top:10px"><button class="btn btn-yellow" style="flex:1;padding:10px" id="playBtn" onclick="togglePlay()">▶️ Play</button><button class="btn btn-blue" style="flex:1;padding:10px" onclick="stopAll()">⏹️ Stop</button><button class="btn btn-outline" style="flex:1;padding:10px" onclick="renderVideo()">⏺️ Render</button></div>
 </div>
 </div>
+
+<!-- PANEL KANAN -->
 <div class="panel">
+<!-- FOTO KONSER DI SIDEBAR KANAN ATAS -->
+<div class="panel-title">📸 PREVIEW SAMPLING KONSER</div>
+<div class="sidebar-img-box">
+  <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80" alt="Panggung Konser">
+</div>
+
+<!-- FITUR-FITUR KANAN DITURUNKAN KE BOWA -->
 <div class="panel-title">02 • SOURCE FILES</div>
 <div class="file-group"><label>🎤 1. VOCAL</label><input type="file" accept="audio/*" onchange="loadVocal(this)"><audio id="audioVocal" controls style="width:100%;margin-top:5px"></audio><div id="vocalInfo" style="font-size:9px;color:#666">Belum load</div></div>
 <div class="file-group"><label>🎵 2. MUSIK INSTRUMENT</label><input type="file" accept="audio/*" onchange="loadMusic(this)"><audio id="audioMusic" controls style="width:100%;margin-top:5px"></audio></div>
@@ -97,23 +116,18 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 
 <footer>
 <div style="display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap">
-<span>© 2026 Created by : <a href="https://ibnu.babloe.com" target="_blank" rel="dofollow" style="color:var(--yellow);font-weight:800">Ibnu Gozali</a></span>
+<span>© 2026 <a href="https://ibnu.babloe.com" target="_blank" rel="dofollow" style="color:var(--yellow);font-weight:800">Ibnu Gozali</a></span>
 <span style="color:#444">|</span>
 <a href="https://karaoke.babloe.com" target="_blank" rel="dofollow" style="color:var(--yellow);font-weight:800">karaoke.babloe.com</a>
 <span style="color:#444">|</span>
 <a href="https://babloe.com" target="_blank" rel="dofollow" style="color:#00c6ff;font-weight:700">babloe.com</a>
 </div>
 </footer>
+
 <script>
 let lyrics=[],markers=[],state={duration:0,current:0,playing:false,img:null,currentIdx:-1,style:{color:'#ffcc00'}};
 let mediaRecorder, audioChunks=[], recordedBlob=null;
 const elVideo=document.getElementById('realVideo'), elVocal=document.getElementById('audioVocal'), elMusic=document.getElementById('audioMusic'), canvas=document.getElementById('canvasPreview'), ctx=canvas.getContext('2d'), overlay=document.getElementById('lyricOverlay');
-
-// LOAD DEFAULT IMAGE PRIA BERNYANGSANG DI PANGGUNG
-const defaultImg = new Image();
-defaultImg.crossOrigin = "anonymous";
-defaultImg.src = "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1280&q=80";
-defaultImg.onload = () => { if (!state.img) { state.img = defaultImg; drawFrame(); } };
 
 function parseLyrics(){ const t=document.getElementById('lyricsInput').value.trim().split('\n').filter(l=>l.trim()); lyrics=t; markers=t.map(()=>({yS:null,yE:null,bS:null,bE:null})); const box=document.getElementById('parsedBox'); box.innerHTML=t.map((l,i)=>`<div class="line-row"><div class="line-text">${i+1}. ${l}</div><div class="edit-row"><label>YS<input id="ys-${i}" type="number" step="0.05" onchange="editMarker(${i})"></label><label>YE<input id="ye-${i}" type="number" step="0.05" onchange="editMarker(${i})"></label><label>BS<input id="bs-${i}" class="b-input" type="number" step="0.05" onchange="editMarker(${i})"></label><label>BE<input id="be-${i}" class="b-input" type="number" step="0.05" onchange="editMarker(${i})"></label></div></div>`).join(''); overlay.innerText=""; state.currentIdx=-1; updateDuration(); }
 function clearMarkers(){ markers=lyrics.map(()=>({yS:null,yE:null,bS:null,bE:null})); lyrics.forEach((_,i)=>{['ys','ye','bs','be'].forEach(k=>{const el=document.getElementById(k+'-'+i); if(el) el.value="";});}); overlay.innerText=""; }
@@ -159,5 +173,6 @@ async function toggleRec(){ try{ const s=await navigator.mediaDevices.getUserMed
 function stopRec(){ if(mediaRecorder) mediaRecorder.stop(); document.getElementById('recBtn').style.display='block'; document.getElementById('stopRecBtn').style.display='none'; }
 function useRecAsVocal(){ if(!recordedBlob) return; elVocal.src=URL.createObjectURL(recordedBlob); }
 function downloadRec(){ if(!recordedBlob) return; const a=document.createElement('a'); a.href=URL.createObjectURL(recordedBlob); a.download='vocal.webm'; a.click(); }
+
 parseLyrics(); drawFrame();
 </script></body></html>
