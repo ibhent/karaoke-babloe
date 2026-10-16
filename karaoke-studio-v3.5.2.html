@@ -1,10 +1,24 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Karaoke Babloe v3.5.2 - Dark Mode Layout Fix</title>
+<title>Karaoke Babloe v3.5.2 - Pembuat Lagu Karaoke, Mudah dan Gratis</title>
 <style>
 :root{--bg:#070a14;--panel:#101528;--border:#1e2a4a;--yellow:#ffcc00;--blue:#00c6ff;--muted:#8899bb}
 *{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:#fff;font-family:Inter,sans-serif;display:flex;flex-direction:column;min-height:100vh}
-header{padding:8px 12px;background:#0b1020;border-bottom:2px solid var(--yellow);display:flex;justify-content:space-between;align-items:center}
+header{padding:8px 12px;background:#0b1020;border-bottom:2px solid var(--yellow);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.app-title{font-weight:800;color:var(--yellow);font-size:14px;white-space:nowrap}
+.header-tagline{font-weight:900;color:var(--yellow);font-size:13px;letter-spacing:0.5px;text-transform:uppercase;text-align:center;flex:1}
+.header-pwa{display:flex;align-items:center;gap:6px;font-size:10px;white-space:nowrap}
+.pwa-select{background:#070a14;color:var(--yellow);border:1px solid var(--border);border-radius:4px;padding:3px 6px;font-size:10px;font-weight:700;cursor:pointer;outline:none}
+.pwa-select:hover{border-color:var(--yellow)}
+
+.layout-container{width:100%;margin:0 auto;transition:all 0.3s ease;flex:1;display:flex;flex-direction:column}
 .layout{display:grid;grid-template-columns:320px 1fr 320px;flex:1;gap:8px;padding:8px}
+
+/* PWA Viewport Modes */
+body.mode-tablet .layout-container{max-width:768px}
+body.mode-tablet .layout{grid-template-columns:1fr;gap:12px}
+body.mode-mobile .layout-container{max-width:390px}
+body.mode-mobile .layout{grid-template-columns:1fr;gap:12px}
+
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:8px}
 .panel-title{font-size:11px;font-weight:800;color:var(--yellow);border-bottom:1px solid var(--border);padding-bottom:4px}
 .btn{border:none;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:700;cursor:pointer}
@@ -26,7 +40,23 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 .sidebar-img-box{width:100%;aspect-ratio:16/9;background:#0b1020;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:4px}
 .sidebar-img-box img{width:100%;height:100%;object-fit:cover;display:block}
 </style></head><body>
-<header><div style="font-weight:800;color:var(--yellow)">Karaoke Babloe v3.5.2</div><div style="font-size:10px"><a href="https://karaoke.babloe.com" target="_blank" style="color:var(--yellow);text-decoration:none">karaoke.babloe.com</a> • Ready GitHub</div></header>
+
+<header>
+  <div class="app-title">Karaoke Babloe v3.5.2</div>
+  <!-- NOMOR 1: TEKS PEMBUAT LAGU KARAOKE, MUDAH DAN GRATIS -->
+  <div class="header-tagline">PEMBUAT LAGU KARAOKE, MUDAH DAN GRATIS</div>
+  <!-- NOMOR 2: PROGRESSIVE WEB APP MODE SELECTOR -->
+  <div class="header-pwa">
+    <span>📱 PWA View:</span>
+    <select id="pwaViewSelect" class="pwa-select" onchange="changePWAView(this.value)">
+      <option value="desktop" selected>🖥️ Desktop</option>
+      <option value="tablet">📱 Tablet Mode</option>
+      <option value="mobile">📲 Android / HP</option>
+    </select>
+  </div>
+</header>
+
+<div class="layout-container">
 <div class="layout">
 <!-- PANEL KIRI -->
 <div class="panel">
@@ -97,8 +127,8 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 <div class="file-group"><label>🎵 2. MUSIK INSTRUMENT</label><input type="file" accept="audio/*" onchange="loadMusic(this)"><audio id="audioMusic" controls style="width:100%;margin-top:5px"></audio></div>
 <div class="file-group"><label>🎬 3. VIDEO BACKGROUND</label><input type="file" accept="video/*" onchange="loadVideo(this)"><div id="videoInfo" style="font-size:9px;color:#666">✅ Auto 16:9 Proporsional</div></div>
 <div class="file-group"><label>🖼️ 4. GAMBAR</label><input type="file" accept="image/*" onchange="loadImage(this)"></div>
-<div class="panel-title">📖 CARA MENGGUNAKAN PROGRAM 1-13</div>
-<div class="tutor"><b style="color:#ffcc00">📖 CARA MENGGUNAKAN PROGRAM 1-13:</b><br>
+<div class="panel-title">📖 CARA MENGGUNAKAN PROGRAM 1-10</div>
+<div class="tutor"><b style="color:#ffcc00">📖 CARA MENGGUNAKAN PROGRAM 1-10:</b><br>
 <b>1.</b> Tulis lirik di kiri, klik <b>Parse Lirik + Reset Kosong</b> - awal KOSONG!<br>
 <b>2.</b> Load: <b>Vocal</b> (atau Record Mic), <b>Musik</b>, <b>Video</b> bus/truk 16:9, <b>Gambar</b> opsional.<br>
 <b>3.</b> Atur Font & Warna: Kuning/Biru/Putih + lingkaran All Color.<br>
@@ -108,10 +138,8 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 <b>7.</b> Edit angka <b>YS YE BS BE</b> manual 0.05 detik!<br>
 <b>8.</b> Sinkron pakai <b>-0.5s -0.1s +0.1s +0.5s</b> + Off Lirik/Vocal/Musik.<br>
 <b>9.</b> Video auto proporsional 16:9 - ban tetap bulet tidak conden!<br>
-<b>10.</b> Centang Hapus Vokal + <b>Render</b> MP4!<br>
-<b>11.</b> Sebelum menggunakan aplikasi ini, pisahkan musik dan vocal mp3 anda di <a href="https://vocalremover.org/id/" target="_blank" rel="noopener noreferrer" style="color:var(--yellow);font-weight:700">REMOVE VOCAL</a>.<br>
-<b>12.</b> Sebelum menggunakan aplikasi ini, pastikan video background yang anda sisipkan sudah tidak memiliki audio, untuk membuang audio di video anda, gunakan web <a href="https://clideo.com/id/mute-video" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-weight:700">REMOVE AUDIO FROM VIDEO</a>.<br>
-<b>13.</b> Dilarang menjual dan mendistribusikan aplikasi ini tanpa izin developer babloe.com (<a href="https://wa.me/6288976106939" target="_blank" rel="noopener noreferrer" style="color:var(--yellow);font-weight:700">Izin jual beli</a>).</div>
+<b>10.</b> Centang Hapus Vokal + <b>Render</b> MP4!</div>
+</div>
 </div>
 </div>
 
@@ -127,6 +155,16 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 let lyrics=[],markers=[],state={duration:0,current:0,playing:false,img:null,currentIdx:-1,style:{color:'#ffcc00'}};
 let mediaRecorder, audioChunks=[], recordedBlob=null;
 const elVideo=document.getElementById('realVideo'), elVocal=document.getElementById('audioVocal'), elMusic=document.getElementById('audioMusic'), canvas=document.getElementById('canvasPreview'), ctx=canvas.getContext('2d'), overlay=document.getElementById('lyricOverlay');
+
+// FUNGSI GANTI VIEWPORT PWA (DESKTOP, TABLET, ANDROID/MOBILE)
+function changePWAView(mode) {
+  document.body.classList.remove('mode-tablet', 'mode-mobile');
+  if (mode === 'tablet') {
+    document.body.classList.add('mode-tablet');
+  } else if (mode === 'mobile') {
+    document.body.classList.add('mode-mobile');
+  }
+}
 
 // FUNGSI UNTUK MENGUNDUH SOURCE CODE HTML APLIKASI
 function downloadAppSource(e) {
