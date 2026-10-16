@@ -82,9 +82,10 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 
 <!-- PANEL KANAN -->
 <div class="panel">
-<!-- TEKS GRATIS & TERIMA DONASI DENGAN LINK PAYPAL TERPERBAIKI -->
-<div class="panel-title">
-  📷 GRATIS & <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ibnu.pkw@gmail.com&item_name=Dukungan+Karaoke+Babloe&currency_code=USD" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline;font-weight:800">TERIMA DONASI</a>
+<!-- JUDUL TERIMA DONASI & TOMBOL DOWNLOAD -->
+<div class="panel-title" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;">
+  <span>📷 GRATIS & <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ibnu.pkw@gmail.com&item_name=Dukungan+Karaoke+Babloe&currency_code=USD" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline;font-weight:800">TERIMA DONASI</a></span>
+  <a href="#" onclick="downloadAppSource(event)" style="color:var(--yellow);text-decoration:underline;font-weight:800;">📥 DOWNLOAD</a>
 </div>
 <div class="sidebar-img-box">
   <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80" alt="Panggung Konser">
@@ -123,6 +124,18 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 let lyrics=[],markers=[],state={duration:0,current:0,playing:false,img:null,currentIdx:-1,style:{color:'#ffcc00'}};
 let mediaRecorder, audioChunks=[], recordedBlob=null;
 const elVideo=document.getElementById('realVideo'), elVocal=document.getElementById('audioVocal'), elMusic=document.getElementById('audioMusic'), canvas=document.getElementById('canvasPreview'), ctx=canvas.getContext('2d'), overlay=document.getElementById('lyricOverlay');
+
+// FUNGSI UNTUK MENGUNDUH SOURCE CODE HTML APLIKASI
+function downloadAppSource(e) {
+  e.preventDefault();
+  const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+  const blob = new Blob([htmlContent], { type: "text/html" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "Karaoke-Babloe-v3.5.2.html";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 
 function parseLyrics(){ const t=document.getElementById('lyricsInput').value.trim().split('\n').filter(l=>l.trim()); lyrics=t; markers=t.map(()=>({yS:null,yE:null,bS:null,bE:null})); const box=document.getElementById('parsedBox'); box.innerHTML=t.map((l,i)=>`<div class="line-row"><div class="line-text">${i+1}. ${l}</div><div class="edit-row"><label>YS<input id="ys-${i}" type="number" step="0.05" onchange="editMarker(${i})"></label><label>YE<input id="ye-${i}" type="number" step="0.05" onchange="editMarker(${i})"></label><label>BS<input id="bs-${i}" class="b-input" type="number" step="0.05" onchange="editMarker(${i})"></label><label>BE<input id="be-${i}" class="b-input" type="number" step="0.05" onchange="editMarker(${i})"></label></div></div>`).join(''); overlay.innerText=""; state.currentIdx=-1; updateDuration(); }
 function clearMarkers(){ markers=lyrics.map(()=>({yS:null,yE:null,bS:null,bE:null})); lyrics.forEach((_,i)=>{['ys','ye','bs','be'].forEach(k=>{const el=document.getElementById(k+'-'+i); if(el) el.value="";});}); overlay.innerText=""; }
