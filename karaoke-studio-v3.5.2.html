@@ -30,10 +30,10 @@ body.mode-mobile .layout{grid-template-columns:1fr;gap:12px}
 .lyric-overlay{position:absolute;bottom:8%;left:0;right:0;text-align:center;font-size:32px;font-weight:800;text-shadow:2px 2px 6px #000;pointer-events:none}
 .line-row{background:#0b1020;border:1px solid var(--border);border-radius:6px;padding:4px;margin-bottom:4px} .line-text{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .edit-row{display:flex;gap:4px;margin-top:2px} .edit-row input{width:100%;background:#070a14;border:1px solid var(--border);color:#fff;font-size:9px;padding:2px;border-radius:3px;text-align:center} .b-input{border-color:var(--blue)!important}
-.timeline-track{position:relative;height:64px;background:#070a14;border:1px solid var(--border);border-radius:6px;margin-top:6px;overflow:hidden} .track-lane{position:absolute;left:0;right:0;height:18px;font-size:9px;padding-left:6px;line-height:18px} .lane-vocal{top:2px;background:#ffcc0033;border-left:3px solid var(--yellow)} .lane-music{top:22px;background:#00c6ff33;border-left:3px solid var(--blue)} .lane-video{top:42px;background:#8a4fff33;border-left:3px solid #8a4fff}
+.timeline-track{position:relative;height:64px;background:#070a14;border:1px solid var(--border);border-radius:6px;margin-top:6px;overflow:hidden} .track-lane{position:absolute;left:0;right:0;height:18px;font-size:9px;padding-left:6px;line-height:18px} .lane-vocal{top:2px;background:#ffcc0033;border-left:3px solid var(--yellow)} .lane-music{top:22px;background:#00c6ff33;border-left:3px solid #00c6ff} .lane-video{top:42px;background:#8a4fff33;border-left:3px solid #8a4fff}
 .playhead{position:absolute;top:0;bottom:0;width:2px;background:#fff;z-index:5} .color-wheel{width:28px;height:28px;border-radius:50%;border:2px solid #fff;cursor:pointer;padding:0}
 footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-align:center;font-size:11px;color:var(--muted)}
-.tutor{font-size:10px;line-height:1.4;background:#0b1020;border:1px solid var(--border);padding:8px;border-radius:6px;max-height:350px;overflow-y:auto}
+.tutor{font-size:10px;line-height:1.4;background:#0b1020;border:1px solid var(--border);padding:8px;border-radius:6px;max-height:320px;overflow-y:auto}
 .rec-box{background:#1a0a0a;border:1px solid #442222;border-radius:8px;padding:6px}
 .vol-control{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700}
 .vol-control input[type=range]{flex:1;accent-color:var(--yellow)}
@@ -77,7 +77,7 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 </div>
 <div class="panel-title">🎨 FONT & WARNA</div>
 <div class="row"><button class="btn btn-yellow" style="flex:1" onclick="setColor('#ffcc00')">Kuning</button><button class="btn btn-blue" style="flex:1" onclick="setColor('#00c6ff')">Biru</button><button class="btn btn-outline" style="flex:1" onclick="setColor('#ffffff')">Putih</button><input type="color" id="colorWheel" class="color-wheel" value="#ffcc00" oninput="setColor(this.value)"></div>
-<div id="parsedBox" style="background:#0b1020;border-radius:8px;height:220px;border:1px solid var(--border);overflow:auto;padding:6px"></div>
+<div id="parsedBox" style="background:#0b1020;border-radius:8px;height:180px;border:1px solid var(--border);overflow:auto;padding:6px"></div>
 
 <!-- VISITOR COUNTER REALTIME -->
 <div class="visitor-box">
@@ -145,7 +145,7 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 <b>10.</b> Centang Hapus Vokal + <b>Render</b> MP4!<br>
 <b>11.</b> Sebelum menggunakan aplikasi ini, pisahkan musik dan vocal mp3 anda di <a href="https://vocalremover.org/id/" target="_blank" style="color:var(--yellow);text-decoration:underline;">REMOVE VOCAL</a>.<br>
 <b>12.</b> Sebelum menggunakan aplikasi ini, pastikan video background yang anda sisipkan sudah tidak memiliki audio, untuk membuang audio di video anda, gunakan web <a href="https://clideo.com/id/mute-video" target="_blank" style="color:var(--yellow);text-decoration:underline;">REMOVE AUDIO FROM VIDEO</a>.<br>
-<b>13.</b> Dilarang menjual dan mendistribusikan aplikasi ini tanpa izin developer babloe.com (Izin jual beli direlink ke nomor WhatsApp <a href="https://wa.me/6288976106939" target="_blank" style="color:var(--yellow);text-decoration:underline;">+62 889-7610-6939</a>).</div>
+<b>13.</b> Dilarang menjual dan mendistribusikan aplikasi ini tanpa izin developer <a href="https://wa.me/6288976106939" target="_blank" style="color:var(--yellow);text-decoration:underline;">babloe.com</a>.</div>
 </div>
 </div>
 </div>
@@ -175,7 +175,6 @@ async function fetchRealVisitors() {
       throw new Error();
     }
   } catch (e) {
-    // Fallback counter berbasis LocalStorage jika API publik offline/terkendala CORS
     let visits = parseInt(localStorage.getItem('kb_visitor_count') || '1540');
     visits++;
     localStorage.setItem('kb_visitor_count', visits);
