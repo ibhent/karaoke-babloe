@@ -28,24 +28,35 @@ body.mode-mobile .layout{grid-template-columns:1fr;gap:12px}
 .preview{background:#000;border-radius:10px;overflow:hidden;border:1px solid var(--border);display:flex;flex-direction:column}
 .preview-stage{position:relative;width:100%;aspect-ratio:16/9;background:#000} #realVideo{position:absolute;inset:0;width:100%;height:100%;display:none} #canvasPreview{position:absolute;inset:0;width:100%;height:100%}
 
-/* OVERLAY LIRIK DEGAN KEEPADAN/FILL BIRU RUNNING GRADIENT */
+/* KONTAINER LIRIK DUA LAPIS (DOUBLE LAYER SWEEP) */
 .lyric-overlay{
   position:absolute;bottom:10%;left:5%;right:5%;
   text-align:center;font-size:34px;font-weight:900;
-  text-shadow:2px 2px 8px #000, -2px -2px 8px #000, 0px 0px 10px #000;
   pointer-events:none;
-  background-clip:text;
-  -webkit-background-clip:text;
-  color:transparent;
-  display:inline-block;
-  line-height:1.3;
+}
+.lyric-base {
+  position: relative;
+  display: inline-block;
+  color: #ffcc00; /* Warna dasar kuning/aktif */
+  text-shadow: 2px 2px 6px #000, -2px -2px 6px #000, 0px 0px 10px #000;
+}
+.lyric-fill {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  color: #00c6ff; /* Warna sapuan biru */
+  text-shadow: 2px 2px 6px #000, -2px -2px 6px #000, 0px 0px 10px #000;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0%; /* Berubah dinamis via JS */
+  transition: width 0.05s linear;
 }
 
 .line-row{background:#0b1020;border:1px solid var(--border);border-radius:6px;padding:4px;margin-bottom:4px;transition:border 0.2s}
 .line-row.active-line{border-color:var(--yellow);background:#182035}
 .line-text{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .edit-row{display:flex;gap:4px;margin-top:2px} .edit-row input{width:100%;background:#070a14;border:1px solid var(--border);color:#fff;font-size:9px;padding:2px;border-radius:3px;text-align:center} .b-input{border-color:var(--blue)!important}
-.timeline-track{position:relative;height:64px;background:#070a14;border:1px solid var(--border);border-radius:6px;margin-top:6px;overflow:hidden} .track-lane{position:absolute;left:0;right:0;height:18px;font-size:9px;padding-left:6px;line-height:18px} .lane-vocal{top:2px;background:#ffcc0033;border-left:3px solid var(--yellow)} .lane-music{top:22px;background:#00c6ff33;border-left:3px solid var(--blue)} .lane-video{top:42px;background:#8a4fff33;border-left:3px solid #8a4fff}
+.timeline-track{position:relative;height:64px;background:#070a14;border:1px solid var(--border);border-radius:6px;margin-top:6px;overflow:hidden} .track-lane{position:absolute;left:0;right:0;height:18px;font-size:9px;padding-left:6px;line-height:18px} .lane-vocal{top:2px;background:#ffcc0033;border-left:3px solid var(--yellow)} .lane-music{top:22px;background:#00c6ff33;border-left:3px solid #00c6ff} .lane-video{top:42px;background:#8a4fff33;border-left:3px solid #8a4fff}
 .playhead{position:absolute;top:0;bottom:0;width:2px;background:#fff;z-index:5} .color-wheel{width:28px;height:28px;border-radius:50%;border:2px solid #fff;cursor:pointer;padding:0}
 footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-align:center;font-size:11px;color:var(--muted)}
 .tutor{font-size:10px;line-height:1.4;background:#0b1020;border:1px solid var(--border);padding:8px;border-radius:6px;max-height:350px;overflow-y:auto}
@@ -75,11 +86,16 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 <!-- PANEL KIRI -->
 <div class="panel">
 <div class="panel-title">01 • LIRIK & TAPPING</div>
-<textarea id="lyricsInput"></textarea>
+<textarea id="lyricsInput">Kucari dan selalu kucari jalan terbaik
+Sepanjang kita masih terus begini
+Berawal dari manisnya kasih sayang
+Terlanjur kita hanyut dan terbuai
+Kucoba bertahan mendampingi dirimu
+Walau kadang kala tak seiring jalan</textarea>
 <div class="row"><button class="btn btn-yellow" style="flex:1" onclick="parseLyrics()">Parse Lirik + Reset Kosong</button><button class="btn btn-outline" style="flex:0.5" onclick="clearMarkers()">Reset Angka</button></div>
 
 <div style="background:#0b1020;border:1px solid var(--border);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px">
-<div style="display:flex;justify-space-between;align-items:center;">
+<div style="display:flex;justify-content:space-between;align-items:center;">
   <span style="font-size:11px;font-weight:800;color:var(--yellow)">🎯 TAP TIMING</span>
   <span id="activeLineInfo" style="font-size:10px;color:var(--blue);font-weight:700">Baris: 1 / 6</span>
 </div>
@@ -107,7 +123,14 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 
 <!-- PANEL TENGAH -->
 <div class="preview">
-<div class="preview-stage"><video id="realVideo" playsinline muted></video><canvas id="canvasPreview" width="1280" height="720"></canvas><div class="lyric-overlay" id="lyricOverlay"></div></div>
+<div class="preview-stage">
+  <video id="realVideo" playsinline muted></video>
+  <canvas id="canvasPreview" width="1280" height="720"></canvas>
+  <div class="lyric-overlay" id="lyricOverlay">
+    <div class="lyric-base" id="lyricBaseText"></div>
+    <div class="lyric-fill" id="lyricFillText"></div>
+  </div>
+</div>
 <div style="background:#101528;border-top:2px solid var(--border);padding:10px">
 <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-top:6px"><span>🎛️ TIMELINE v3.5.2 - AUTO 16:9 CONTAIN</span><span id="timeDisplay">00:00 / 00:00</span></div>
 <div class="timeline-track" id="timelineTrack" onclick="seek(event)"><div class="playhead" id="playhead"></div><div class="track-lane lane-vocal" id="laneVocal">🎤 VOCAL</div><div class="track-lane lane-music" id="laneMusic">🎵 MUSIK</div><div class="track-lane lane-video" id="laneVideo">🎬 VIDEO</div></div>
@@ -177,9 +200,10 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 <script>
 let lyrics=[],markers=[],state={duration:0,current:0,playing:false,img:null,currentIdx:0,style:{color:'#ffcc00'}};
 let mediaRecorder, audioChunks=[], recordedBlob=null;
-const elVideo=document.getElementById('realVideo'), elVocal=document.getElementById('audioVocal'), elMusic=document.getElementById('audioMusic'), canvas=document.getElementById('canvasPreview'), ctx=canvas.getContext('2d'), overlay=document.getElementById('lyricOverlay');
+const elVideo=document.getElementById('realVideo'), elVocal=document.getElementById('audioVocal'), elMusic=document.getElementById('audioMusic'), canvas=document.getElementById('canvasPreview'), ctx=canvas.getContext('2d');
+const baseTextEl = document.getElementById('lyricBaseText');
+const fillTextEl = document.getElementById('lyricFillText');
 
-// REALTIME VISITOR COUNTER API
 async function fetchRealVisitors() {
   const countEl = document.getElementById('realVisitorCount');
   try {
@@ -220,7 +244,8 @@ function parseLyrics(){
   markers=t.map(()=>({yS:null,yE:null,bS:null,bE:null}));
   state.currentIdx=0;
   renderParsedBox();
-  overlay.innerText="";
+  baseTextEl.innerText="";
+  fillTextEl.innerText="";
   updateDuration();
   updateActiveLineUI();
 }
@@ -251,7 +276,8 @@ function clearMarkers(){
   markers=lyrics.map(()=>({yS:null,yE:null,bS:null,bE:null}));
   state.currentIdx=0;
   lyrics.forEach((_,i)=>{['ys','ye','bs','be'].forEach(k=>{const el=document.getElementById(k+'-'+i); if(el) el.value="";});});
-  overlay.innerText="";
+  baseTextEl.innerText="";
+  fillTextEl.innerText="";
   updateActiveLineUI();
 }
 
@@ -266,7 +292,6 @@ function editMarker(i){
   markers[i].bE=isNaN(be)?null:be;
 }
 
-// LOGIKA TAP TAP UTAMA
 function tapYellow(){
   if(!state.playing){ alert('Klik PLAY terlebih dahulu untuk mulai Tap!'); return;}
   const idx=state.currentIdx;
@@ -296,19 +321,16 @@ function tapBlueEnd(){
   markers[idx].bE=state.current;
   document.getElementById('be-'+idx).value=state.current.toFixed(2);
   
-  // PERBAIKAN: OTOMATIS PINDAH KE BARIS LIRIK BERIKUTNYA
   if(state.currentIdx < lyrics.length - 1){
     state.currentIdx++;
     updateActiveLineUI();
   }
 }
 
-// PERHITUNGAN VISUAL LIRIK DENGAN EFEK BIRU BERJALAN HALUS (SMOOTH FILL)
 function getLyricRenderState(t){
   for(let i=0; i<markers.length; i++){
     const m = markers[i];
     if(m.yS !== null){
-      // Rentang tampilkan lirik ini
       const endBoundary = (m.bE !== null) ? m.bE + 1.5 : (m.yE !== null ? m.yE + 3 : m.yS + 10);
       if(t >= m.yS && t <= endBoundary){
         let fillPercent = 0;
@@ -351,7 +373,7 @@ function drawFrame(){
 }
 
 function drawLoop(){ if(!state.playing) return; drawFrame(); requestAnimationFrame(drawLoop);}
-function setColor(c){ state.style.color=c; document.getElementById('colorWheel').value=c; }
+function setColor(c){ state.style.color=c; document.getElementById('colorWheel').value=c; baseTextEl.style.color=c; }
 
 async function togglePlay(){
   if(state.playing){ pauseAll(); return;}
@@ -369,18 +391,15 @@ async function togglePlay(){
     if(!state.playing) return;
     state.current=(Date.now()-start)/1000 - lOff;
     
-    // UPDATE LIRIK & PROGRESS RUNNING HIGHLIGHT
     const res = getLyricRenderState(state.current);
     if(!res){
-      overlay.innerText="";
+      baseTextEl.innerText="";
+      fillTextEl.innerText="";
     } else {
-      overlay.innerText = res.text;
-      const baseColor = state.style.color || '#ffcc00';
-      const blueColor = '#00c6ff';
-      const pct = res.fillPercent;
-      
-      // Menerapkan Efek Warna Biru Berjalan Menyapu Warna Kuning
-      overlay.style.backgroundImage = `linear-gradient(to right, ${blueColor} ${pct}%, ${baseColor} ${pct}%)`;
+      baseTextEl.innerText = res.text;
+      fillTextEl.innerText = res.text;
+      fillTextEl.style.width = res.fillPercent + '%';
+      baseTextEl.style.color = state.style.color || '#ffcc00';
     }
 
     const pctTime=state.duration?state.current/state.duration:0;
@@ -394,7 +413,7 @@ async function togglePlay(){
 }
 
 function pauseAll(){ state.playing=false; document.getElementById('playBtn').innerText='▶️ Play'; elVideo.pause(); elMusic.pause(); elVocal.pause(); }
-function stopAll(){ state.playing=false; state.current=0; document.getElementById('playBtn').innerText='▶️ Play'; elVideo.pause(); elMusic.pause(); elVocal.pause(); try{elVideo.currentTime=0; elMusic.currentTime=0; elVocal.currentTime=0;}catch(e){} document.getElementById('playhead').style.left='0%'; overlay.innerText=""; }
+function stopAll(){ state.playing=false; state.current=0; document.getElementById('playBtn').innerText='▶️ Play'; elVideo.pause(); elMusic.pause(); elVocal.pause(); try{elVideo.currentTime=0; elMusic.currentTime=0; elVocal.currentTime=0;}catch(e){} document.getElementById('playhead').style.left='0%'; baseTextEl.innerText=""; fillTextEl.innerText=""; }
 function seek(e){ const r=e.currentTarget.getBoundingClientRect(); const pct=(e.clientX-r.left)/r.width; state.current=pct*state.duration; elVideo.currentTime=state.current; elMusic.currentTime=state.current; elVocal.currentTime=state.current; }
 function nudge(d){ let o=parseFloat(document.getElementById('lyricOffset').value||0)+d; document.getElementById('lyricOffset').value=o.toFixed(2); }
 function renderVideo(){ alert('Render v3.5.2 - karaoke.babloe.com'); }
