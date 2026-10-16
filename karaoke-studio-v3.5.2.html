@@ -22,7 +22,7 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 .tutor{font-size:10px;line-height:1.4;background:#0b1020;border:1px solid var(--border);padding:8px;border-radius:6px}
 .rec-box{background:#1a0a0a;border:1px solid #442222;border-radius:8px;padding:6px}
 </style></head><body>
-<header><div style="font-weight:800;color:var(--yellow)">Karaoke Babloe v3.5.2 | Video Auto 16:9 - Ban Bulet Fix</div><div style="font-size:10px">karaoke.babloe.com • Ready GitHub</div></header>
+<header><div style="font-weight:800;color:var(--yellow)">Karaoke Babloe v3.5.2</div><div style="font-size:10px"><a href="https://karaoke.babloe.com" target="_blank" style="color:var(--yellow);text-decoration:none">karaoke.babloe.com</a> • Ready GitHub</div></header>
 <div class="layout">
 <div class="panel">
 <div class="panel-title">01 • LIRIK & TAPPING</div>
@@ -49,12 +49,11 @@ Walau kadang kala tak seiring jalan</textarea>
 <div class="panel-title">🎨 FONT & WARNA</div>
 <div class="row"><button class="btn btn-yellow" style="flex:1" onclick="setColor('#ffcc00')">Kuning</button><button class="btn btn-blue" style="flex:1" onclick="setColor('#00c6ff')">Biru</button><button class="btn btn-outline" style="flex:1" onclick="setColor('#ffffff')">Putih</button><input type="color" id="colorWheel" class="color-wheel" value="#ffcc00" oninput="setColor(this.value)"></div>
 <div id="parsedBox" style="background:#0b1020;border-radius:8px;height:280px;border:1px solid var(--border);overflow:auto;padding:6px"></div>
-<div class="visitor-box"><div style="font-size:11px;font-weight:700;color:var(--yellow)">👁️ Visitor v3.5.2</div><div style="font-size:20px;font-weight:800;color:#fff">v3.5.2 Ready - karaoke.babloe.com</div></div>
+<div class="visitor-box"><div style="font-size:11px;font-weight:700;color:var(--yellow)">👁️ Visitor v3.5.2</div><div style="font-size:14px;font-weight:800;color:#fff">v3.5.2 Ready</div></div>
 </div>
 <div class="preview">
 <div class="preview-stage"><video id="realVideo" playsinline muted></video><canvas id="canvasPreview" width="1280" height="720"></canvas><div class="lyric-overlay" id="lyricOverlay"></div></div>
 <div style="background:#101528;border-top:2px solid var(--border);padding:10px">
-<!-- VIDEO MODE FIX SUDAH DIHAPUS PERMANEN - AUTO CONTAIN 16:9 -->
 <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-top:6px"><span>🎛️ TIMELINE v3.5.2 - AUTO 16:9 CONTAIN</span><span id="timeDisplay">00:00 / 00:00</span></div>
 <div class="timeline-track" id="timelineTrack" onclick="seek(event)"><div class="playhead" id="playhead"></div><div class="track-lane lane-vocal" id="laneVocal">🎤 VOCAL</div><div class="track-lane lane-music" id="laneMusic">🎵 MUSIK</div><div class="track-lane lane-video" id="laneVideo">🎬 VIDEO</div></div>
 <div style="display:flex;gap:6px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
@@ -64,7 +63,10 @@ Walau kadang kala tak seiring jalan</textarea>
 <label style="font-size:9px">Off Musik<br><input id="musicOffset" type="number" value="0" step="0.1" style="width:56px;background:#0b1020;border:1px solid var(--border);color:#fff;padding:4px;border-radius:4px;text-align:center"></label>
 <div style="flex:1"></div><button class="btn btn-outline" onclick="nudge(0.1)">+0.1s</button><button class="btn btn-outline" onclick="nudge(0.5)">+0.5s</button>
 </div>
-<div style="background:#1a233a;border:1px solid #2a3a5a;border-radius:8px;padding:8px;margin-top:8px"><label style="font-size:11px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="removeVocalCheck" checked> <span style="color:var(--yellow);font-weight:800">☑️ Hapus Vokal Panduan</span></label></div>
+<div style="display:flex;gap:8px;margin-top:8px">
+<div style="background:#1a233a;border:1px solid #2a3a5a;border-radius:8px;padding:8px;flex:1"><label style="font-size:11px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="removeVocalCheck" checked> <span style="color:var(--yellow);font-weight:800">☑️ Hapus Vokal Panduan</span></label></div>
+<div style="background:#1a233a;border:1px solid #2a3a5a;border-radius:8px;padding:8px;flex:1"><label style="font-size:11px;display:flex;align-items:center;gap:8px"><input type="checkbox" id="muteVocalCheck" onchange="toggleMuteVocal()"> <span style="color:var(--blue);font-weight:800">🔇 Mute / Non-aktifkan Vokal</span></label></div>
+</div>
 <div class="row" style="margin-top:10px"><button class="btn btn-yellow" style="flex:1;padding:10px" id="playBtn" onclick="togglePlay()">▶️ Play</button><button class="btn btn-blue" style="flex:1;padding:10px" onclick="stopAll()">⏹️ Stop</button><button class="btn btn-outline" style="flex:1;padding:10px" onclick="renderVideo()">⏺️ Render</button></div>
 </div>
 </div>
@@ -72,7 +74,7 @@ Walau kadang kala tak seiring jalan</textarea>
 <div class="panel-title">02 • SOURCE FILES</div>
 <div class="file-group"><label>🎤 1. VOCAL</label><input type="file" accept="audio/*" onchange="loadVocal(this)"><audio id="audioVocal" controls style="width:100%;margin-top:5px"></audio><div id="vocalInfo" style="font-size:9px;color:#666">Belum load</div></div>
 <div class="file-group"><label>🎵 2. MUSIK INSTRUMENT</label><input type="file" accept="audio/*" onchange="loadMusic(this)"><audio id="audioMusic" controls style="width:100%;margin-top:5px"></audio></div>
-<div class="file-group"><label>🎬 3. VIDEO BACKGROUND</label><input type="file" accept="video/*" onchange="loadVideo(this)"><div id="videoInfo" style="font-size:9px;color:#666">✅ Auto 16:9 Proporsional - Ban Bulet Tetap Bulet!</div></div>
+<div class="file-group"><label>🎬 3. VIDEO BACKGROUND</label><input type="file" accept="video/*" onchange="loadVideo(this)"><div id="videoInfo" style="font-size:9px;color:#666">✅ Auto 16:9 Proporsional</div></div>
 <div class="file-group"><label>🖼️ 4. GAMBAR</label><input type="file" accept="image/*" onchange="loadImage(this)"></div>
 <div class="panel-title">📖 CARA MENGGUNAKAN PROGRAM 1-10</div>
 <div class="tutor"><b style="color:#ffcc00">📖 CARA MENGGUNAKAN PROGRAM 1-10:</b><br>
@@ -95,11 +97,7 @@ Walau kadang kala tak seiring jalan</textarea>
 <span style="color:#444">|</span>
 <a href="https://karaoke.babloe.com" target="_blank" rel="dofollow" style="color:var(--yellow);font-weight:800">karaoke.babloe.com</a>
 <span style="color:#444">|</span>
-<a href="https://ibnu.babloe.com" target="_blank" rel="dofollow" style="color:#00c6ff;font-weight:700">ibnu.babloe.com</a>
-<span style="color:#444">|</span>
 <a href="https://babloe.com" target="_blank" rel="dofollow" style="color:#00c6ff;font-weight:700">babloe.com</a>
-<span style="color:#444">|</span>
-<span style="color:var(--muted)">Karaoke Babloe v3.5.2 - Video Auto 16:9 Fix (Hapus Video Mode UI) - Ban Bulet 100%</span>
 </div>
 </footer>
 <script>
@@ -115,6 +113,7 @@ function loadVocal(i){ const f=i.files[0]; if(!f) return; elVocal.src=URL.create
 function loadMusic(i){ const f=i.files[0]; if(!f) return; elMusic.src=URL.createObjectURL(f); elMusic.load(); elMusic.onloadedmetadata=updateDuration; }
 function loadVideo(i){ const f=i.files[0]; if(!f) return; elVideo.src=URL.createObjectURL(f); elVideo.load(); elVideo.style.display='block'; document.getElementById('videoInfo').innerText='✅ '+f.name+' - Auto 16:9'; elVideo.onloadedmetadata=()=>{updateDuration(); drawFrame();}; }
 function loadImage(i){ const f=i.files[0]; if(!f) return; const img=new Image(); img.src=URL.createObjectURL(f); img.onload=()=>{state.img=img; drawFrame();}; }
+function toggleMuteVocal(){ const isMuted=document.getElementById('muteVocalCheck').checked; elVocal.muted=isMuted; }
 function drawFrame(){
   const cw=canvas.width, ch=canvas.height;
   ctx.fillStyle='#000'; ctx.fillRect(0,0,cw,ch);
@@ -134,12 +133,12 @@ function tapBlue(){ if(!state.playing){ alert('Play dulu!'); return;} const idx=
 function tapBlueEnd(){ const idx=state.currentIdx>=0?state.currentIdx:0; markers[idx].bE=state.current; document.getElementById('be-'+idx).value=state.current.toFixed(2); if(idx+1<markers.length) state.currentIdx=idx+1; }
 function getLyricByMarkers(t){ for(let i=0;i<markers.length;i++){ const m=markers[i]; if(m.bS!==null && m.bE!==null && t>=m.bS && t<=m.bE) return i; if(m.yS!==null && m.yE!==null && t>=m.yS && t<=m.yE) return i; if(m.yS!==null && m.yE===null && t>=m.yS) return i; if(m.bS!==null && m.bE===null && t>=m.bS) return i; } return -1; }
 function setColor(c){ state.style.color=c; document.getElementById('colorWheel').value=c; }
-async function togglePlay(){ if(state.playing){ pauseAll(); return;} state.playing=true; document.getElementById('playBtn').innerText='⏸️ Pause'; const vOff=parseFloat(document.getElementById('vocalOffset').value||0), mOff=parseFloat(document.getElementById('musicOffset').value||0), lOff=parseFloat(document.getElementById('lyricOffset').value||0); try{ if(elMusic.src){ elMusic.currentTime=Math.max(state.current+mOff,0); await elMusic.play(); } if(elVocal.src){ elVocal.currentTime=Math.max(state.current+vOff,0); await elVocal.play(); } if(elVideo.src){ elVideo.currentTime=Math.max(state.current,0); elVideo.muted=true; await elVideo.play(); } }catch(e){} const start=Date.now()-(state.current+lOff)*1000; function tick(){ if(!state.playing) return; state.current=(Date.now()-start)/1000 - lOff; const idx=getLyricByMarkers(state.current); state.currentIdx=idx; if(idx===-1){ overlay.innerText=""; } else { overlay.innerText=lyrics[idx]; const mm=markers[idx]; if(mm && mm.bS!==null && state.current>=mm.bS){ overlay.style.color='#00c6ff'; } else { overlay.style.color=state.style.color||'#ffcc00'; } } const pct=state.duration?state.current/state.duration:0; document.getElementById('playhead').style.left=(pct*100)+'%'; document.getElementById('timeDisplay').innerText=formatFull(state.current)+' / '+formatFull(state.duration); if(state.current>=state.duration){ stopAll(); return;} requestAnimationFrame(tick);} drawLoop(); tick(); }
+async function togglePlay(){ if(state.playing){ pauseAll(); return;} state.playing=true; document.getElementById('playBtn').innerText='⏸️ Pause'; const vOff=parseFloat(document.getElementById('vocalOffset').value||0), mOff=parseFloat(document.getElementById('musicOffset').value||0), lOff=parseFloat(document.getElementById('lyricOffset').value||0); try{ if(elMusic.src){ elMusic.currentTime=Math.max(state.current+mOff,0); await elMusic.play(); } if(elVocal.src){ elVocal.currentTime=Math.max(state.current+vOff,0); elVocal.muted=document.getElementById('muteVocalCheck').checked; await elVocal.play(); } if(elVideo.src){ elVideo.currentTime=Math.max(state.current,0); elVideo.muted=true; await elVideo.play(); } }catch(e){} const start=Date.now()-(state.current+lOff)*1000; function tick(){ if(!state.playing) return; state.current=(Date.now()-start)/1000 - lOff; const idx=getLyricByMarkers(state.current); state.currentIdx=idx; if(idx===-1){ overlay.innerText=""; } else { overlay.innerText=lyrics[idx]; const mm=markers[idx]; if(mm && mm.bS!==null && state.current>=mm.bS){ overlay.style.color='#00c6ff'; } else { overlay.style.color=state.style.color||'#ffcc00'; } } const pct=state.duration?state.current/state.duration:0; document.getElementById('playhead').style.left=(pct*100)+'%'; document.getElementById('timeDisplay').innerText=formatFull(state.current)+' / '+formatFull(state.duration); if(state.current>=state.duration){ stopAll(); return;} requestAnimationFrame(tick);} drawLoop(); tick(); }
 function pauseAll(){ state.playing=false; document.getElementById('playBtn').innerText='▶️ Play'; elVideo.pause(); elMusic.pause(); elVocal.pause(); }
 function stopAll(){ state.playing=false; state.current=0; document.getElementById('playBtn').innerText='▶️ Play'; elVideo.pause(); elMusic.pause(); elVocal.pause(); try{elVideo.currentTime=0; elMusic.currentTime=0; elVocal.currentTime=0;}catch(e){} document.getElementById('playhead').style.left='0%'; overlay.innerText=""; }
 function seek(e){ const r=e.currentTarget.getBoundingClientRect(); const pct=(e.clientX-r.left)/r.width; state.current=pct*state.duration; elVideo.currentTime=state.current; elMusic.currentTime=state.current; elVocal.currentTime=state.current; }
 function nudge(d){ let o=parseFloat(document.getElementById('lyricOffset').value||0)+d; document.getElementById('lyricOffset').value=o.toFixed(2); }
-function renderVideo(){ alert('Render v3.5.2 - karaoke.babloe.com - Ban Bulet 100% Fix!'); }
+function renderVideo(){ alert('Render v3.5.2 - karaoke.babloe.com'); }
 async function toggleRec(){ try{ const s=await navigator.mediaDevices.getUserMedia({audio:true}); audioChunks=[]; mediaRecorder=new MediaRecorder(s); mediaRecorder.ondataavailable=e=>{if(e.data.size>0) audioChunks.push(e.data);}; mediaRecorder.onstop=()=>{ recordedBlob=new Blob(audioChunks,{type:'audio/webm'}); document.getElementById('recordedAudio').src=URL.createObjectURL(recordedBlob); document.getElementById('recordedAudio').style.display='block'; document.getElementById('useRecBtn').style.display='block'; s.getTracks().forEach(t=>t.stop()); }; mediaRecorder.start(); document.getElementById('recBtn').style.display='none'; document.getElementById('stopRecBtn').style.display='block'; }catch(e){alert(e.message);} }
 function stopRec(){ if(mediaRecorder) mediaRecorder.stop(); document.getElementById('recBtn').style.display='block'; document.getElementById('stopRecBtn').style.display='none'; }
 function useRecAsVocal(){ if(!recordedBlob) return; elVocal.src=URL.createObjectURL(recordedBlob); }
