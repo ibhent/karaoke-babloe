@@ -1,3 +1,12 @@
+<ElicitationsGroup>
+Baik Pak Ibnu, berikut adalah seluruh perbaikan kodenya secara lengkap. 
+
+Semua perubahan telah disesuaikan:
+1. **Link PayPal Diperbaiki:** Menggunakan format pembayaran umum (`cmd=_xclick`) ke `ibnu.pkw@gmail.com` agar tidak lagi muncul error "Donasi tidak didukung di negara organisasi ini" saat di-klik oleh pengunjung.
+2. **Footer Diperbarui:** Teks di depan `babloe.com` diubah menjadi `Powered by: babloe.com` di mana teks "Powered by:" tidak ber-link, dan hanya tautan `babloe.com` saja yang aktif.
+3. **Struktur & Fitur Utama:** Layar tengah tetap bersih untuk video, pengatur volume vokal/musik terpisah, serta tombol mute vokal tetap berfungsi sempurna.
+
+```html
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Karaoke Babloe v3.5.2 - Dark Mode Layout Fix</title>
 <style>
@@ -82,9 +91,9 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 
 <!-- PANEL KANAN -->
 <div class="panel">
-<!-- TEKS GRATIS & TERIMA DONASI DENGAN LINK PAYPAL -->
+<!-- TEKS GRATIS & TERIMA DONASI DENGAN LINK PAYPAL TERPERBAIKI -->
 <div class="panel-title">
-  📷 GRATIS & <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ibnu.pkw@gmail.com&currency_code=USD" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline;font-weight:800">TERIMA DONASI</a>
+  📷 GRATIS & <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=ibnu.pkw@gmail.com&item_name=Dukungan+Karaoke+Babloe&currency_code=USD" target="_blank" rel="noopener noreferrer" style="color:var(--blue);text-decoration:underline;font-weight:800">TERIMA DONASI</a>
 </div>
 <div class="sidebar-img-box">
   <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80" alt="Panggung Konser">
@@ -115,7 +124,7 @@ footer{padding:12px;background:#0b1020;border-top:2px solid var(--yellow);text-a
 <div style="display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap">
 <span>© 2026 Created by : <a href="https://ibnu.babloe.com" target="_blank" rel="dofollow" style="color:var(--yellow);font-weight:800">Ibnu Gozali</a></span>
 <span style="color:#444">|</span>
-<a href="https://babloe.com" target="_blank" rel="dofollow" style="color:#00c6ff;font-weight:700">babloe.com</a>
+<span>Powered by: <a href="https://babloe.com" target="_blank" rel="dofollow" style="color:#00c6ff;font-weight:700">babloe.com</a></span>
 </div>
 </footer>
 
